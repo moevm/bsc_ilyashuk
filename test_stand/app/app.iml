@@ -25,7 +25,7 @@
       </configuration>
     </facet>
     <facet type="kotlin-language" name="Kotlin">
-      <configuration version="3" platform="JVM 1.6" allPlatforms="JVM [1.6]" useProjectSettings="false" pureKotlinSourceFolders="$MODULE_DIR$/src/debug/kotlin;/Users/cupofme/Documents/Projects/bsc-test-stand/app/src/debug/java;/Users/cupofme/Documents/Projects/bsc-test-stand/app/src/release/kotlin;/Users/cupofme/Documents/Projects/bsc-test-stand/app/src/release/java;/Users/cupofme/Documents/Projects/bsc-test-stand/app/src/debugAndroidTest/kotlin;/Users/cupofme/Documents/Projects/bsc-test-stand/app/src/debugUnitTest/kotlin;/Users/cupofme/Documents/Projects/bsc-test-stand/app/src/releaseUnitTest/kotlin">
+      <configuration version="3" platform="JVM 1.6" allPlatforms="JVM [1.6]" useProjectSettings="false" pureKotlinSourceFolders="$MODULE_DIR$/src/debug/kotlin;/Users/cupofme/Documents/bsc_ilyashuk/test_stand/app/src/debug/java;/Users/cupofme/Documents/bsc_ilyashuk/test_stand/app/src/release/kotlin;/Users/cupofme/Documents/bsc_ilyashuk/test_stand/app/src/release/java;/Users/cupofme/Documents/bsc_ilyashuk/test_stand/app/src/debugAndroidTest/kotlin;/Users/cupofme/Documents/bsc_ilyashuk/test_stand/app/src/debugUnitTest/kotlin;/Users/cupofme/Documents/bsc_ilyashuk/test_stand/app/src/releaseUnitTest/kotlin">
         <compilerSettings>
           <option name="additionalArguments" value="-Xallow-no-source-files" />
         </compilerSettings>
