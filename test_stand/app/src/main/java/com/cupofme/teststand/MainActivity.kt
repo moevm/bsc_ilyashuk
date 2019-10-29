@@ -20,6 +20,14 @@ import android.view.MenuItem
 import android.os.Environment.getExternalStorageDirectory
 import androidx.core.app.ActivityCompat
 import androidx.core.net.toUri
+import be.tarsos.dsp.mfcc.MFCC
+import be.tarsos.dsp.AudioEvent
+import be.tarsos.dsp.AudioProcessor
+import be.tarsos.dsp.AudioDispatcher
+import be.tarsos.dsp.io.android.AndroidFFMPEGLocator
+import be.tarsos.dsp.io.TarsosDSPAudioFormat
+import be.tarsos.dsp.io.UniversalAudioInputStream
+import java.io.FileInputStream
 
 
 class MainActivity : AppCompatActivity() {
@@ -151,6 +159,37 @@ class MainActivity : AppCompatActivity() {
             totalLength += mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION).toInt()
         }
         return totalLength / 1000
+    }
+
+    private fun onMFCC(path: String) {
+
+        val sampleRate = 44100f
+        val bufferSize = 1024
+        val bufferOverlap = 128
+        AndroidFFMPEGLocator(this)
+        val inStream = FileInputStream(path)
+        val dispatcher = AudioDispatcher(
+            UniversalAudioInputStream(
+                inStream,
+                TarsosDSPAudioFormat(sampleRate, bufferSize, 1, true, true)
+            ), bufferSize, bufferOverlap
+        )
+        val mfcc = MFCC(bufferSize, sampleRate, 40, 50, 300f, 3000f)
+
+        dispatcher.addAudioProcessor(mfcc)
+        dispatcher.addAudioProcessor(object : AudioProcessor {
+
+            override fun processingFinished() {
+                println(mfcc.mfcc)
+            }
+
+            override fun process(audioEvent: AudioEvent): Boolean {
+                // breakpoint or logging to console doesn't enter function
+                return true
+            }
+        })
+        dispatcher.run()
+
     }
 
 
