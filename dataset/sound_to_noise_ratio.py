@@ -1,6 +1,8 @@
 import scipy.io.wavfile as wavfile
 import numpy
 import os.path
+from os import listdir
+from os.path import isfile, join
 
 
 def snr(file):
@@ -10,7 +12,6 @@ def snr(file):
         try:
             singleChannel = numpy.sum(data, axis=1)
         except:
-            # was mono after all
             pass
         norm = singleChannel / \
             (max(numpy.amax(singleChannel), -1 * numpy.amin(singleChannel)))
@@ -25,4 +26,7 @@ def signaltonoise(a, axis=0, ddof=0):
 
 
 if __name__ == "__main__":
-    print(snr('test.wav'))
+    path = './samples/'
+    files = [f for f in listdir(path) if isfile(join(path, f))]
+    for file in files:
+        print(snr(path + file))
