@@ -9,7 +9,7 @@ playlists = [
 
 ydl_opts = {
     'format': 'bestaudio/best',
-    'outtmpl': './download/%(channel_id)s_%(id)s.%(ext)s',
+    'outtmpl': './download/%(id)s.%(ext)s',
     'postprocessors': [{
         'key': 'FFmpegExtractAudio',
         'preferredcodec': 'wav',

@@ -15,3 +15,38 @@ source inaSpeechSegEnv/bin/activate
 pip install tensorflow
 pip install inaSpeechSegmenter
 ```
+
+Использование [inaSpeechSegmenter](https://github.com/ina-foss/inaSpeechSegmenter)
+
+```bash
+python ina_speech_segmenter.py -i input_files -o output_directory -d smn -g true
+
+```
+
+Аргументы
+
+```bash
+  -i INPUT [INPUT ...], --input INPUT [INPUT ...]
+                        Input media to analyse. May be a full path to a media
+                        (/home/david/test.mp3), a list of full paths
+                        (/home/david/test.mp3 /tmp/mymedia.avi), or a regex
+                        input pattern ("/home/david/myaudiobooks/*.mp3")
+  -o OUTPUT_DIRECTORY, --output_directory OUTPUT_DIRECTORY
+                        Directory used to store segmentations. Resulting
+                        segmentations have same base name as the corresponding
+                        input media, with csv extension. Ex: mymedia.MPG will
+                        result in mymedia.csv
+  -d {sm,smn}, --vad_engine {sm,smn}
+                        Voice activity detection (VAD) engine to be used
+                        (default: 'smn'). 'smn' split signal into 'speech',
+                        'music' and 'noise' (better). 'sm' split signal into
+                        'speech' and 'music' and do not take noise into
+                        account, which is either classified as music or
+                        speech. Results presented in ICASSP were obtained
+                        using 'sm' option
+  -g {true,false}, --detect_gender {true,false}
+                        (default: 'true'). If set to 'true', segments detected
+                        as speech will be splitted into 'male' and 'female'
+                        segments. If set to 'false', segments corresponding to
+                        speech will be labelled as 'speech' (faster)
+```

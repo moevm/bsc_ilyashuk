@@ -26,7 +26,7 @@ def signaltonoise(a, axis=0, ddof=0):
 
 
 if __name__ == "__main__":
-    path = './samples/'
+    path = './splitted/'
     files = [f for f in listdir(path) if isfile(join(path, f))]
     for file in files:
         print(snr(path + file))
