@@ -5,7 +5,7 @@
 1. audio_downloader - загрузка аудиодорожек с youtube.
 2. ina_speech_segmenter - сегментация аудио на сегменты с голосом/музыкой/тишиной, на выходе получаем csv файл.
 3. splitter - разбивает wav файл на фрагменты согласно полученному на шаге 2 csv файлу.
-4. sound_to_noise_ratio - вычисления sound to noise ratio (попытка оценить качество собранных материалов).
+4. thdn - total harmonic distortion + noise (попытка оценить качество материалов из датасета).
 
 Процедура установки [inaSpeechSegmenter](https://github.com/ina-foss/inaSpeechSegmenter)
 
@@ -20,7 +20,6 @@ pip install inaSpeechSegmenter
 
 ```bash
 python ina_speech_segmenter.py -i input_files -o output_directory -d smn -g true
-
 ```
 
 Аргументы
