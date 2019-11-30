@@ -6,11 +6,17 @@ from numpy import argmax, sqrt, mean, absolute, arange, log10
 import numpy as np
 from os import listdir
 from os.path import isfile, join
+import csv
 
 try:
     import soundfile as sf
 except ImportError:
     from scikits.audiolab import Sndfile
+
+thdn_file = open('thdn.csv', mode='w')
+writer = csv.writer(thdn_file, delimiter=',',
+                    quotechar='"', quoting=csv.QUOTE_MINIMAL)
+writer.writerow(['filename', 'frequency', 'THD+N %', 'THD+N db'])
 
 
 def rms_flat(a):
@@ -35,7 +41,7 @@ def find_range(f, x):
     return (lowermin, uppermin)
 
 
-def THDN(signal, sample_rate):
+def THDN(signal, sample_rate, filename):
     """
     Measure the THD+N for a signal and print the results
     Prints the estimated fundamental frequency and the measured THD+N.  This is
@@ -45,9 +51,8 @@ def THDN(signal, sample_rate):
     out the entire thing.  A fixed-width filter would probably be just as good,
     if not better.
     """
-    # Get rid of DC and window the signal
 
-    # TODO: Do this in the frequency domain, and take any skirts with it?
+    # Get rid of DC and window the signal
     signal -= mean(signal)
     windowed = signal * blackmanharris(len(signal))  # TODO Kaiser?
 
@@ -66,11 +71,11 @@ def THDN(signal, sample_rate):
     f[lowermin: uppermin] = 0
 
     # Transform noise back into the signal domain and measure it
-    # TODO: Could probably calculate the RMS directly in the frequency domain
-    # instead
     noise = irfft(f)
     THDN = rms_flat(noise) / total_rms
     print("THD+N:     %.4f%% or %.1f dB" % (THDN * 100, 20 * log10(THDN)))
+    writer.writerow([filename, sample_rate * (i / len(windowed)),
+                     THDN * 100, 20 * log10(THDN)])
 
 
 def load(filename):
@@ -101,33 +106,36 @@ def analyze_channels(filename, function):
 
     if channels == 1:
         # Monaural
-        function(signal, sample_rate)
+        function(signal, sample_rate, filename)
     elif channels == 2:
         # Stereo
         if np.array_equal(signal[:, 0], signal[:, 1]):
             print('-- Left and Right channels are identical --')
-            function(signal[:, 0], sample_rate)
+            function(signal[:, 0], sample_rate, filename)
         else:
             print('-- Left channel --')
-            function(signal[:, 0], sample_rate)
+            function(signal[:, 0], sample_rate, filename)
             print('-- Right channel --')
-            function(signal[:, 1], sample_rate)
+            function(signal[:, 1], sample_rate, filename)
     else:
         # Multi-channel
         for ch_no, channel in enumerate(signal.transpose()):
             print('-- Channel %d --' % (ch_no + 1))
-            function(channel, sample_rate)
+            function(channel, sample_rate, filename)
 
 
-path = './splitted/'
-files = [f for f in listdir(path) if isfile(join(path, f))]
-if files:
-    for filename in files:
-        try:
-            analyze_channels(path + filename, THDN)
-        except Exception as e:
-            print('Couldn\'t analyze "' + filename + '"')
-            print(e)
-        print()
-else:
-    sys.exit("You must provide at least one file to analyze")
+if __name__ == "__main__":
+    path = '../splitted/'
+    files = [f for f in listdir(path) if (
+        isfile(join(path, f)) & f.endswith('.wav'))]
+
+    if files:
+        for filename in files:
+            try:
+                analyze_channels(path + filename, THDN)
+            except Exception as e:
+                print('Couldn\'t analyze "' + filename + '"')
+                print(e)
+            print()
+    else:
+        sys.exit("You must provide at least one file to analyze")
