@@ -13,6 +13,11 @@ class MainActivity : AppCompatActivity() {
         findViewById<Button>(R.id.list_button).setOnClickListener {
             startActivity(Intent(this, AudioListActivity::class.java))
         }
+
+
+        findViewById<Button>(R.id.nn_button).setOnClickListener {
+            startActivity(Intent(this, NNActivity::class.java))
+        }
     }
 
 }
