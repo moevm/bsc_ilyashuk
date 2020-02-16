@@ -18,6 +18,10 @@ class MainActivity : AppCompatActivity() {
         findViewById<Button>(R.id.nn_button).setOnClickListener {
             startActivity(Intent(this, NNActivity::class.java))
         }
+
+        findViewById<Button>(R.id.segmentation_button).setOnClickListener {
+            startActivity(Intent(this, SegmentationActivity::class.java))
+        }
     }
 
 }

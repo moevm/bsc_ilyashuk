@@ -5,4 +5,5 @@
     <string name="add_directory">Add directory</string>
     <string name="open_list">Open list</string>
     <string name="open_nn">Open NN</string>
+    <string name="segmentation">Segmentation</string>
 </resources>
