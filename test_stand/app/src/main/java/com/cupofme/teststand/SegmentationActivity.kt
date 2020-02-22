@@ -28,7 +28,7 @@ class SegmentationActivity : AppCompatActivity() {
     private val countdownVolumesList = mutableListOf<Double>()
     private val speechVolumesList = mutableListOf<Double>()
     private var speechDuration: Long = 0
-    private val pauses = mutableListOf<Pair<Long, Boolean>>()
+    private val pauseMetadata = mutableListOf<Pair<Long, Boolean>>()
     private val byteArrayOutputStream = ByteArrayOutputStream()
 
     init {
@@ -102,7 +102,11 @@ class SegmentationActivity : AppCompatActivity() {
             AudioTrack.MODE_STREAM
         )
         audio.play()
-        audio.write(byteArrayOutputStream.toByteArray(), 0, byteArrayOutputStream.toByteArray().size)
+        audio.write(
+            byteArrayOutputStream.toByteArray(),
+            0,
+            byteArrayOutputStream.toByteArray().size
+        )
     }
 
     private fun recordCountdownAudio(continueCondition: () -> Boolean) {
@@ -160,9 +164,9 @@ class SegmentationActivity : AppCompatActivity() {
                 val fragmentVolume = calculateVolume(shortsRead)
                 speechVolumesList.add(fragmentVolume)
                 if (fragmentVolume < silenceLevel) {
-                    pauses.add(Pair(System.currentTimeMillis(), true))
+                    pauseMetadata.add(Pair(System.currentTimeMillis(), true))
                 } else {
-                    pauses.add(Pair(System.currentTimeMillis(), false))
+                    pauseMetadata.add(Pair(System.currentTimeMillis(), false))
                 }
                 totalFragmentsOnSlide++
                 totalFragmentsRead++
@@ -178,8 +182,29 @@ class SegmentationActivity : AppCompatActivity() {
 
             speechVolumesList.sort()
 
+
+//            val segments = mutableListOf<Triple<Boolean, Long, Long>>()
+//
+//            pauseMetadata.forEachIndexed { index, pair ->
+//                if(segments.lastOrNull() != null) {
+//                    if(pair.second) {
+//                        if(segments.last().first) {
+//
+//                        } else {
+//
+//                        }
+//                    } else {
+//
+//                    }
+//                } else {
+//                    segments.add(Triple(pair.second, pair.first, 0))
+//                }
+//
+//            }
+
             speechRecord.stop()
             speechRecord.release()
+
 
             Log.i(AUDIO_RECORDING, "Finished speech audio recording")
         }
