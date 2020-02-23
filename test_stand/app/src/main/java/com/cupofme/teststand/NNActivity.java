@@ -11,23 +11,14 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.HandlerThread;
 import android.util.Log;
-import android.widget.CompoundButton;
-import android.widget.ImageView;
 import android.widget.TextView;
-
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.SwitchCompat;
-
 import org.tensorflow.lite.Interpreter;
-
-import java.io.BufferedReader;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.nio.MappedByteBuffer;
 import java.nio.channels.FileChannel;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -66,11 +57,21 @@ public class NNActivity extends AppCompatActivity {
     boolean shouldContinueRecognition = true;
     private Thread recognitionThread;
     private final ReentrantLock recordingBufferLock = new ReentrantLock();
-
-    private List<String> labels = new ArrayList<String>();
-    private List<String> displayedLabels = new ArrayList<>();
+    private List<String> labels = new ArrayList() {{
+        add("_silence_");
+        add("_unknown_");
+        add("yes");
+        add("no");
+        add("up");
+        add("down");
+        add("left");
+        add("right");
+        add("on");
+        add("off");
+        add("stop");
+        add("go");
+    }};
     private RecognizeCommands recognizeCommands = null;
-
     private Interpreter tfLite;
 
     private TextView yesTextView,
@@ -83,15 +84,12 @@ public class NNActivity extends AppCompatActivity {
             offTextView,
             stopTextView,
             goTextView;
-    private long lastProcessingTimeMs;
     private Handler handler = new Handler();
     private TextView selectedTextView = null;
     private HandlerThread backgroundThread;
     private Handler backgroundHandler;
 
-    /**
-     * Memory-map the model file in Assets.
-     */
+
     private static MappedByteBuffer loadModelFile(AssetManager assets, String modelFilename)
             throws IOException {
         AssetFileDescriptor fileDescriptor = assets.openFd(modelFilename);
@@ -106,25 +104,6 @@ public class NNActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_nn);
-
-        // Load the labels for the model, but only display those that don't start
-        // with an underscore.
-        String actualLabelFilename = LABEL_FILENAME.split("file:///android_asset/", -1)[1];
-
-        BufferedReader br = null;
-        try {
-            br = new BufferedReader(new InputStreamReader(getAssets().open(actualLabelFilename)));
-            String line;
-            while ((line = br.readLine()) != null) {
-                labels.add(line);
-                if (line.charAt(0) != '_') {
-                    displayedLabels.add(line.substring(0, 1).toUpperCase() + line.substring(1));
-                }
-            }
-            br.close();
-        } catch (IOException e) {
-            throw new RuntimeException("Problem reading label file!", e);
-        }
 
         // Set up an object to smooth recognition results to increase accuracy.
         recognizeCommands =
@@ -187,14 +166,7 @@ public class NNActivity extends AppCompatActivity {
             return;
         }
         shouldContinue = true;
-        recordingThread =
-                new Thread(
-                        new Runnable() {
-                            @Override
-                            public void run() {
-                                record();
-                            }
-                        });
+        recordingThread = new Thread(this::record);
         recordingThread.start();
     }
 
@@ -264,14 +236,7 @@ public class NNActivity extends AppCompatActivity {
             return;
         }
         shouldContinueRecognition = true;
-        recognitionThread =
-                new Thread(
-                        new Runnable() {
-                            @Override
-                            public void run() {
-                                recognize();
-                            }
-                        });
+        recognitionThread = new Thread(this::recognize);
         recognitionThread.start();
     }
 
@@ -294,7 +259,7 @@ public class NNActivity extends AppCompatActivity {
 
         // Loop, grabbing recorded data and running the recognition model on it.
         while (shouldContinueRecognition) {
-            long startTime = new Date().getTime();
+
             // The recording thread places data in this round-robin buffer, so lock to
             // make sure there's no writing happening and then copy it to our own
             // local version.
@@ -326,78 +291,65 @@ public class NNActivity extends AppCompatActivity {
             long currentTime = System.currentTimeMillis();
             final RecognitionResult result =
                     recognizeCommands.processLatestResults(outputScores[0], currentTime);
-            lastProcessingTimeMs = new Date().getTime() - startTime;
-            runOnUiThread(
-                    new Runnable() {
-                        @Override
-                        public void run() {
-
-                            // If we do have a new command, highlight the right list entry.
-                            if (!result.getFoundCommand().startsWith("_") && result.isNewCommand()) {
-                                int labelIndex = -1;
-                                for (int i = 0; i < labels.size(); ++i) {
-                                    if (labels.get(i).equals(result.getFoundCommand())) {
-                                        labelIndex = i;
-                                    }
-                                }
-
-                                switch (labelIndex - 2) {
-                                    case 0:
-                                        selectedTextView = yesTextView;
-                                        break;
-                                    case 1:
-                                        selectedTextView = noTextView;
-                                        break;
-                                    case 2:
-                                        selectedTextView = upTextView;
-                                        break;
-                                    case 3:
-                                        selectedTextView = downTextView;
-                                        break;
-                                    case 4:
-                                        selectedTextView = leftTextView;
-                                        break;
-                                    case 5:
-                                        selectedTextView = rightTextView;
-                                        break;
-                                    case 6:
-                                        selectedTextView = onTextView;
-                                        break;
-                                    case 7:
-                                        selectedTextView = offTextView;
-                                        break;
-                                    case 8:
-                                        selectedTextView = stopTextView;
-                                        break;
-                                    case 9:
-                                        selectedTextView = goTextView;
-                                        break;
-                                }
-
-                                if (selectedTextView != null) {
-                                    selectedTextView.setBackgroundResource(R.drawable.round_corner_text_bg_selected);
-                                    final String score = Math.round(result.getScore() * 100) + "%";
-                                    selectedTextView.setText(selectedTextView.getText() + "\n" + score);
-                                    selectedTextView.setTextColor(
-                                            getResources().getColor(android.R.color.holo_orange_light));
-                                    handler.postDelayed(
-                                            new Runnable() {
-                                                @Override
-                                                public void run() {
-                                                    String origionalString =
-                                                            selectedTextView.getText().toString().replace(score, "").trim();
-                                                    selectedTextView.setText(origionalString);
-                                                    selectedTextView.setBackgroundResource(
-                                                            R.drawable.round_corner_text_bg_unselected);
-                                                    selectedTextView.setTextColor(
-                                                            getResources().getColor(android.R.color.darker_gray));
-                                                }
-                                            },
-                                            750);
-                                }
-                            }
+            runOnUiThread(() -> {
+                // If we do have a new command, highlight the right list entry.
+                if (!result.getFoundCommand().startsWith("_") && result.isNewCommand()) {
+                    int labelIndex = -1;
+                    for (int i = 0; i < labels.size(); ++i) {
+                        if (labels.get(i).equals(result.getFoundCommand())) {
+                            labelIndex = i;
                         }
-                    });
+                    }
+
+                    switch (labelIndex - 2) {
+                        case 0:
+                            selectedTextView = yesTextView;
+                            break;
+                        case 1:
+                            selectedTextView = noTextView;
+                            break;
+                        case 2:
+                            selectedTextView = upTextView;
+                            break;
+                        case 3:
+                            selectedTextView = downTextView;
+                            break;
+                        case 4:
+                            selectedTextView = leftTextView;
+                            break;
+                        case 5:
+                            selectedTextView = rightTextView;
+                            break;
+                        case 6:
+                            selectedTextView = onTextView;
+                            break;
+                        case 7:
+                            selectedTextView = offTextView;
+                            break;
+                        case 8:
+                            selectedTextView = stopTextView;
+                            break;
+                        case 9:
+                            selectedTextView = goTextView;
+                            break;
+                    }
+
+                    if (selectedTextView != null) {
+                        selectedTextView.setBackgroundResource(R.drawable.round_corner_text_bg_selected);
+                        final String score = Math.round(result.getScore() * 100) + "%";
+                        selectedTextView.setText(selectedTextView.getText() + "\n" + score);
+                        selectedTextView.setTextColor(
+                                getResources().getColor(android.R.color.holo_orange_light));
+                        handler.postDelayed(() -> {
+                            String originalString =
+                                    selectedTextView.getText().toString().replace(score, "").trim();
+                            selectedTextView.setText(originalString);
+                            selectedTextView.setBackgroundResource(R.drawable.round_corner_text_bg_unselected);
+                            selectedTextView.setTextColor(getResources().getColor(android.R.color.darker_gray));
+                        }, 750);
+                    }
+                }
+            });
             try {
                 // We don't need to run too frequently, so snooze for a bit.
                 Thread.sleep(MINIMUM_TIME_BETWEEN_SAMPLES_MS);
