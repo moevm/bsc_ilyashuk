@@ -18,13 +18,11 @@
             android:layout_height="50dp"
             android:text="@string/open_list" />
 
-
         <Button
             android:id="@+id/nn_button"
             android:layout_width="match_parent"
             android:layout_height="50dp"
             android:text="@string/open_nn" />
-
 
         <Button
             android:id="@+id/segmentation_button"
