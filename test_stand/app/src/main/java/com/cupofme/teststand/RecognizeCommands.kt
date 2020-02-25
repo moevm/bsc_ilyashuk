@@ -22,12 +22,18 @@ class RecognizeCommands(
     private val suppressionMs: Int
     private val minimumCount: Int
     private val minimumTimeBetweenSamplesMs: Long
+
     // Working variables.
     private val previousResults: Deque<Pair<Long, FloatArray>> = ArrayDeque()
     private var previousTopLabel: String
     private val labelsCount: Int
     private var previousTopLabelTime: Long
     private var previousTopLabelScore: Float
+
+    companion object {
+        private const val SILENCE_LABEL = "_silence_"
+        private const val MINIMUM_TIME_FRACTION: Long = 4
+    }
 
     init {
         labels = inLabels
@@ -46,15 +52,9 @@ class RecognizeCommands(
         Comparable<ScoreForSorting> {
         override fun compareTo(other: ScoreForSorting): Int {
             return when {
-                score > other.score -> {
-                    -1
-                }
-                score < other.score -> {
-                    1
-                }
-                else -> {
-                    0
-                }
+                score > other.score -> -1
+                score < other.score -> 1
+                else -> 0
             }
         }
 
@@ -137,7 +137,8 @@ class RecognizeCommands(
         val currentTopScore = sortedAverageScores[0]!!.score
         // If we've recently had another label trigger, assume one that occurs too
         // soon afterwards is a bad result.
-        val timeSinceLastTop: Long = if (previousTopLabel == SILENCE_LABEL || previousTopLabelTime == Long.MIN_VALUE) {
+        val timeSinceLastTop: Long =
+            if (previousTopLabel == SILENCE_LABEL || previousTopLabelTime == Long.MIN_VALUE) {
                 Long.MAX_VALUE
             } else {
                 currentTimeMS - previousTopLabelTime
@@ -152,11 +153,6 @@ class RecognizeCommands(
             isNewCommand = false
         }
         return RecognitionResult(currentTopLabel, currentTopScore, isNewCommand)
-    }
-
-    companion object {
-        private const val SILENCE_LABEL = "_silence_"
-        private const val MINIMUM_TIME_FRACTION: Long = 4
     }
 }
 

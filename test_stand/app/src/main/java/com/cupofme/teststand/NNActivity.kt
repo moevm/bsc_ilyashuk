@@ -17,6 +17,7 @@ import java.nio.MappedByteBuffer
 import java.nio.channels.FileChannel
 import java.util.*
 import java.util.concurrent.locks.ReentrantLock
+import kotlin.math.max
 import kotlin.math.roundToInt
 
 /**
@@ -25,11 +26,11 @@ import kotlin.math.roundToInt
  */
 class NNActivity : AppCompatActivity() {
     // Working variables.
-    var recordingBuffer = ShortArray(RECORDING_LENGTH)
-    var recordingOffset = 0
-    var shouldContinue = true
+    private var recordingBuffer = ShortArray(RECORDING_LENGTH)
+    private var recordingOffset = 0
+    private var shouldContinue = true
     private var recordingThread: Thread? = null
-    var shouldContinueRecognition = true
+    private var shouldContinueRecognition = true
     private var recognitionThread: Thread? = null
     private val recordingBufferLock = ReentrantLock()
     private val labels: List<String> = listOf(
@@ -152,7 +153,9 @@ class NNActivity : AppCompatActivity() {
     }
 
     override fun onRequestPermissionsResult(
-        requestCode: Int, permissions: Array<String>, grantResults: IntArray
+        requestCode: Int,
+        permissions: Array<String>,
+        grantResults: IntArray
     ) {
         if (requestCode == REQUEST_RECORD_AUDIO && grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED
         ) {
@@ -169,15 +172,6 @@ class NNActivity : AppCompatActivity() {
         shouldContinue = true
         recordingThread = Thread(Runnable { record() })
         recordingThread!!.start()
-    }
-
-    @Synchronized
-    fun stopRecording() {
-        if (recordingThread == null) {
-            return
-        }
-        shouldContinue = false
-        recordingThread = null
     }
 
     private fun record() {
@@ -210,7 +204,7 @@ class NNActivity : AppCompatActivity() {
             val numberRead = record.read(audioBuffer, 0, audioBuffer.size)
             val maxLength = recordingBuffer.size
             val newRecordingOffset = recordingOffset + numberRead
-            val secondCopyLength = Math.max(0, newRecordingOffset - maxLength)
+            val secondCopyLength = max(0, newRecordingOffset - maxLength)
             val firstCopyLength = numberRead - secondCopyLength
             // We store off all the data for the recognition thread to access. The ML
             // thread will copy out of this buffer into its own, while holding the
@@ -248,15 +242,6 @@ class NNActivity : AppCompatActivity() {
         shouldContinueRecognition = true
         recognitionThread = Thread(Runnable { recognize() })
         recognitionThread!!.start()
-    }
-
-    @Synchronized
-    fun stopRecognition() {
-        if (recognitionThread == null) {
-            return
-        }
-        shouldContinueRecognition = false
-        recognitionThread = null
     }
 
     private fun recognize() {
