@@ -6,16 +6,22 @@ import android.content.res.AssetManager
 import android.media.AudioFormat
 import android.media.AudioRecord
 import android.media.MediaRecorder
-import android.os.*
+import android.os.Build
+import android.os.Bundle
+import android.os.Process
 import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
+import be.tarsos.dsp.AudioDispatcher
 import be.tarsos.dsp.AudioEvent
 import be.tarsos.dsp.AudioProcessor
-import be.tarsos.dsp.io.jvm.AudioDispatcherFactory
+import be.tarsos.dsp.io.TarsosDSPAudioFormat
+import be.tarsos.dsp.io.UniversalAudioInputStream
+import be.tarsos.dsp.io.android.AndroidFFMPEGLocator
 import be.tarsos.dsp.mfcc.MFCC
 import org.tensorflow.lite.Interpreter
 import java.io.FileInputStream
 import java.io.IOException
+import java.io.InputStream
 import java.nio.MappedByteBuffer
 import java.nio.channels.FileChannel
 import java.util.*
@@ -56,6 +62,7 @@ class NNActivity : AppCompatActivity() {
         private const val RECORDING_LENGTH = (SAMPLE_RATE * SAMPLE_DURATION_MS / 1000)
         private const val MINIMUM_TIME_BETWEEN_SAMPLES_MS: Long = 30
         private const val MODEL_FILENAME = "file:///android_asset/emotion_recognition.tflite"
+
         // UI elements.
         private const val REQUEST_RECORD_AUDIO = 13
         private val LOG_TAG = NNActivity::class.java.simpleName
@@ -113,31 +120,33 @@ class NNActivity : AppCompatActivity() {
         permissions: Array<String>,
         grantResults: IntArray
     ) {
-        if (requestCode == REQUEST_RECORD_AUDIO && grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED
+        if (requestCode == REQUEST_RECORD_AUDIO && grantResults.isNotEmpty() &&
+            grantResults[0] == PackageManager.PERMISSION_GRANTED
         ) {
             startRecording()
             startRecognition()
         }
     }
 
-    private fun mfcc(buffer : FloatArray) {
-        val bufferSize = 1024
+    private fun mfcc(buffer: FloatArray) {
+        val sampleRate = 16000
+        val bufferSize = 512
         val bufferOverlap = 128
-        val dispatcher = AudioDispatcherFactory.fromFloatArray(
-            buffer,
-            SAMPLING_RATE,
-            bufferSize,
-            bufferOverlap
+        AndroidFFMPEGLocator(this)
+        val mfccList: MutableList<FloatArray> = ArrayList(200)
+        val inStream: InputStream = assets.open("audio/03-01-06-02-01-01-09.wav")
+        val dispatcher = AudioDispatcher(
+            UniversalAudioInputStream(
+                inStream,
+                TarsosDSPAudioFormat(sampleRate.toFloat(), bufferSize, 1, true, true)
+            ), bufferSize, bufferOverlap
         )
-        val mfcc = MFCC(bufferSize, SAMPLING_RATE.toFloat(), 40, 50, 300f, 3000f)
+        val mfcc = MFCC(bufferSize, sampleRate.toFloat(), 20, 50, 300f, 3000f)
         dispatcher.addAudioProcessor(mfcc)
         dispatcher.addAudioProcessor(object : AudioProcessor {
-            override fun processingFinished() {
-
-            }
+            override fun processingFinished() {}
             override fun process(audioEvent: AudioEvent): Boolean {
-                mfcc.process(audioEvent)
-                mfcc.mfcc
+                mfccList.add(mfcc.mfcc)
                 return true
             }
         })
@@ -190,7 +199,7 @@ class NNActivity : AppCompatActivity() {
             // thread will copy out of this buffer into its own, while holding the
             // lock, so this should be thread safe.
             recordingBufferLock.lock()
-            mfcc(FloatArray(audioBuffer.size) { audioBuffer[it].toFloat()})
+            mfcc(FloatArray(audioBuffer.size) { audioBuffer[it].toFloat() })
             recordingOffset = try {
                 System.arraycopy(
                     audioBuffer,
