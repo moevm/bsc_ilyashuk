@@ -1,8 +1,10 @@
 package com.cupofme.teststand
 
-import android.media.*
 import android.media.AudioFormat.*
+import android.media.AudioManager
+import android.media.AudioRecord
 import android.media.AudioTrack
+import android.media.MediaRecorder
 import android.os.Bundle
 import android.os.Handler
 import android.os.Process
@@ -20,7 +22,7 @@ const val SAMPLING_RATE = 44100
 const val AUDIO_RECORDING = "SEGMENTATION"
 
 class SegmentationActivity : AppCompatActivity() {
-    var isRecording = false
+    private var isRecording = false
 
     private val audioBuffer: ShortArray
     private val countdownRecord: AudioRecord
@@ -66,13 +68,11 @@ class SegmentationActivity : AppCompatActivity() {
             play()
         }
 
-
         var cond = true
         Handler().postDelayed({
             cond = false
         }, 2000)
         recordCountdownAudio { cond }
-
     }
 
     private fun initAudioRecording(bufferSize: Int): AudioRecord {
@@ -81,7 +81,7 @@ class SegmentationActivity : AppCompatActivity() {
             CHANNEL_IN_MONO, ENCODING_PCM_16BIT, bufferSize
         )
         if (record.state != AudioRecord.STATE_INITIALIZED) {
-            throw Exception("Кажет нет разрешения")
+            throw Exception("Кажется нет разрешения")
         }
 
         return record
@@ -161,6 +161,7 @@ class SegmentationActivity : AppCompatActivity() {
 
             while (isRecording) {
                 val shortsRead = speechRecord.read(audioBuffer, 0, audioBuffer.size)
+
                 val fragmentVolume = calculateVolume(shortsRead)
                 speechVolumesList.add(fragmentVolume)
                 if (fragmentVolume < silenceLevel) {
@@ -181,26 +182,6 @@ class SegmentationActivity : AppCompatActivity() {
             speechDuration = System.currentTimeMillis() - startTime
 
             speechVolumesList.sort()
-
-
-//            val segments = mutableListOf<Triple<Boolean, Long, Long>>()
-//
-//            pauseMetadata.forEachIndexed { index, pair ->
-//                if(segments.lastOrNull() != null) {
-//                    if(pair.second) {
-//                        if(segments.last().first) {
-//
-//                        } else {
-//
-//                        }
-//                    } else {
-//
-//                    }
-//                } else {
-//                    segments.add(Triple(pair.second, pair.first, 0))
-//                }
-//
-//            }
 
             speechRecord.stop()
             speechRecord.release()

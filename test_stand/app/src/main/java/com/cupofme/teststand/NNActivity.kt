@@ -8,8 +8,11 @@ import android.media.AudioRecord
 import android.media.MediaRecorder
 import android.os.*
 import android.util.Log
-import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
+import be.tarsos.dsp.AudioEvent
+import be.tarsos.dsp.AudioProcessor
+import be.tarsos.dsp.io.jvm.AudioDispatcherFactory
+import be.tarsos.dsp.mfcc.MFCC
 import org.tensorflow.lite.Interpreter
 import java.io.FileInputStream
 import java.io.IOException
@@ -18,7 +21,6 @@ import java.nio.channels.FileChannel
 import java.util.*
 import java.util.concurrent.locks.ReentrantLock
 import kotlin.math.max
-import kotlin.math.roundToInt
 
 
 class NNActivity : AppCompatActivity() {
@@ -42,11 +44,7 @@ class NNActivity : AppCompatActivity() {
         "stop",
         "go"
     )
-    private var recognizeCommands: RecognizeCommands? = null
     private var tfLite: Interpreter? = null
-    private val handler = Handler()
-    private var backgroundThread: HandlerThread? = null
-    private var backgroundHandler: Handler? = null
 
     companion object {
         // Constants that control the behavior of the recognition code and model
@@ -56,12 +54,8 @@ class NNActivity : AppCompatActivity() {
         private const val SAMPLE_RATE = 16000
         private const val SAMPLE_DURATION_MS = 1000
         private const val RECORDING_LENGTH = (SAMPLE_RATE * SAMPLE_DURATION_MS / 1000)
-        private const val AVERAGE_WINDOW_DURATION_MS: Long = 1000
-        private const val DETECTION_THRESHOLD = 0.50f
-        private const val SUPPRESSION_MS = 1500
-        private const val MINIMUM_COUNT = 3
         private const val MINIMUM_TIME_BETWEEN_SAMPLES_MS: Long = 30
-        private const val MODEL_FILENAME = "file:///android_asset/model.tflite"
+        private const val MODEL_FILENAME = "file:///android_asset/emotion_recognition.tflite"
         // UI elements.
         private const val REQUEST_RECORD_AUDIO = 13
         private val LOG_TAG = NNActivity::class.java.simpleName
@@ -80,22 +74,12 @@ class NNActivity : AppCompatActivity() {
                 declaredLength
             )
         }
-
-        private const val HANDLE_THREAD_NAME = "CameraBackground"
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_nn)
-        // Set up an object to smooth recognition results to increase accuracy.
-        recognizeCommands = RecognizeCommands(
-            labels,
-            AVERAGE_WINDOW_DURATION_MS,
-            DETECTION_THRESHOLD,
-            SUPPRESSION_MS,
-            MINIMUM_COUNT,
-            MINIMUM_TIME_BETWEEN_SAMPLES_MS
-        )
+
         val actualModelFilename =
             MODEL_FILENAME.split("file:///android_asset/")
                 .dropLastWhile { it.isEmpty() }.toTypedArray()[1]
@@ -134,6 +118,30 @@ class NNActivity : AppCompatActivity() {
             startRecording()
             startRecognition()
         }
+    }
+
+    private fun mfcc(buffer : FloatArray) {
+        val bufferSize = 1024
+        val bufferOverlap = 128
+        val dispatcher = AudioDispatcherFactory.fromFloatArray(
+            buffer,
+            SAMPLING_RATE,
+            bufferSize,
+            bufferOverlap
+        )
+        val mfcc = MFCC(bufferSize, SAMPLING_RATE.toFloat(), 40, 50, 300f, 3000f)
+        dispatcher.addAudioProcessor(mfcc)
+        dispatcher.addAudioProcessor(object : AudioProcessor {
+            override fun processingFinished() {
+
+            }
+            override fun process(audioEvent: AudioEvent): Boolean {
+                mfcc.process(audioEvent)
+                mfcc.mfcc
+                return true
+            }
+        })
+        dispatcher.run()
     }
 
     @Synchronized
@@ -182,6 +190,7 @@ class NNActivity : AppCompatActivity() {
             // thread will copy out of this buffer into its own, while holding the
             // lock, so this should be thread safe.
             recordingBufferLock.lock()
+            mfcc(FloatArray(audioBuffer.size) { audioBuffer[it].toFloat()})
             recordingOffset = try {
                 System.arraycopy(
                     audioBuffer,
@@ -217,11 +226,10 @@ class NNActivity : AppCompatActivity() {
     }
 
     private fun recognize() {
-        Log.v(LOG_TAG, "Start recognition")
         val inputBuffer = ShortArray(RECORDING_LENGTH)
         val floatInputBuffer = Array(RECORDING_LENGTH) { FloatArray(1) }
         val outputScores = Array(1) { FloatArray(labels.size) }
-        val sampleRateList = intArrayOf(SAMPLE_RATE)
+
         // Loop, grabbing recorded data and running the recognition model on it.
         while (shouldContinueRecognition) { // The recording thread places data in this round-robin buffer, so lock to
             // make sure there's no writing happening and then copy it to our own
@@ -268,33 +276,5 @@ class NNActivity : AppCompatActivity() {
             } catch (e: InterruptedException) {
             }
         }
-        Log.v(LOG_TAG, "End recognition")
-    }
-
-    private fun startBackgroundThread() {
-        backgroundThread = HandlerThread(HANDLE_THREAD_NAME)
-        backgroundThread!!.start()
-        backgroundHandler = Handler(backgroundThread!!.looper)
-    }
-
-    private fun stopBackgroundThread() {
-        backgroundThread!!.quitSafely()
-        try {
-            backgroundThread!!.join()
-            backgroundThread = null
-            backgroundHandler = null
-        } catch (e: InterruptedException) {
-            Log.e("amlan", "Interrupted when stopping background thread", e)
-        }
-    }
-
-    override fun onResume() {
-        super.onResume()
-        startBackgroundThread()
-    }
-
-    override fun onStop() {
-        super.onStop()
-        stopBackgroundThread()
     }
 }
