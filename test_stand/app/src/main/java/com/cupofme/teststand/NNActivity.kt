@@ -20,10 +20,7 @@ import java.util.concurrent.locks.ReentrantLock
 import kotlin.math.max
 import kotlin.math.roundToInt
 
-/**
- * An activity that listens for audio and then uses a TensorFlow model to detect particular classes,
- * by default a small set of action words.
- */
+
 class NNActivity : AppCompatActivity() {
     // Working variables.
     private var recordingBuffer = ShortArray(RECORDING_LENGTH)
@@ -34,8 +31,6 @@ class NNActivity : AppCompatActivity() {
     private var recognitionThread: Thread? = null
     private val recordingBufferLock = ReentrantLock()
     private val labels: List<String> = listOf(
-        "_silence_",
-        "_unknown_",
         "yes",
         "no",
         "up",
@@ -49,18 +44,7 @@ class NNActivity : AppCompatActivity() {
     )
     private var recognizeCommands: RecognizeCommands? = null
     private var tfLite: Interpreter? = null
-    private var yesTextView: TextView? = null
-    private var noTextView: TextView? = null
-    private var upTextView: TextView? = null
-    private var downTextView: TextView? = null
-    private var leftTextView: TextView? = null
-    private var rightTextView: TextView? = null
-    private var onTextView: TextView? = null
-    private var offTextView: TextView? = null
-    private var stopTextView: TextView? = null
-    private var goTextView: TextView? = null
     private val handler = Handler()
-    private var selectedTextView: TextView? = null
     private var backgroundThread: HandlerThread? = null
     private var backgroundHandler: Handler? = null
 
@@ -77,7 +61,7 @@ class NNActivity : AppCompatActivity() {
         private const val SUPPRESSION_MS = 1500
         private const val MINIMUM_COUNT = 3
         private const val MINIMUM_TIME_BETWEEN_SAMPLES_MS: Long = 30
-        private const val MODEL_FILENAME = "file:///android_asset/conv_actions_frozen.tflite"
+        private const val MODEL_FILENAME = "file:///android_asset/model.tflite"
         // UI elements.
         private const val REQUEST_RECORD_AUDIO = 13
         private val LOG_TAG = NNActivity::class.java.simpleName
@@ -125,22 +109,10 @@ class NNActivity : AppCompatActivity() {
         } catch (e: Exception) {
             throw RuntimeException(e)
         }
-        tfLite!!.resizeInput(0, intArrayOf(RECORDING_LENGTH, 1))
-        tfLite!!.resizeInput(1, intArrayOf(1))
-        // Start the recording and recognition threads.
+
         requestMicrophonePermission()
         startRecording()
         startRecognition()
-        yesTextView = findViewById(R.id.yes)
-        noTextView = findViewById(R.id.no)
-        upTextView = findViewById(R.id.up)
-        downTextView = findViewById(R.id.down)
-        leftTextView = findViewById(R.id.left)
-        rightTextView = findViewById(R.id.right)
-        onTextView = findViewById(R.id.on)
-        offTextView = findViewById(R.id.off)
-        stopTextView = findViewById(R.id.stop)
-        goTextView = findViewById(R.id.go)
     }
 
     private fun requestMicrophonePermission() {
@@ -281,55 +253,16 @@ class NNActivity : AppCompatActivity() {
             for (i in 0 until RECORDING_LENGTH) {
                 floatInputBuffer[i][0] = inputBuffer[i] / 32767.0f
             }
-            val inputArray = arrayOf(floatInputBuffer, sampleRateList)
-            val outputMap: MutableMap<Int, Any> = HashMap()
-            outputMap[0] = outputScores
+            val output: MutableMap<Int, Any> = HashMap()
+            output[0] = outputScores
+
+            val input = FloatArray(216) { 0.2f }
 
             // Run the model.
-            tfLite!!.runForMultipleInputsOutputs(inputArray, outputMap)
+            tfLite?.runForMultipleInputsOutputs(arrayOf(input), output)
 
-            // Use the smoother to figure out if we've had a real recognition event.
-            val currentTime = System.currentTimeMillis()
-            val result = recognizeCommands!!.processLatestResults(outputScores[0], currentTime)
-            runOnUiThread {
-                // If we do have a new command, highlight the right list entry.
-                if (!result.foundCommand.startsWith("_") && result.isNewCommand) {
-                    var labelIndex = -1
-                    for (i in labels.indices) {
-                        if (labels[i] == result.foundCommand) {
-                            labelIndex = i
-                        }
-                    }
-                    when (labelIndex - 2) {
-                        0 -> selectedTextView = yesTextView
-                        1 -> selectedTextView = noTextView
-                        2 -> selectedTextView = upTextView
-                        3 -> selectedTextView = downTextView
-                        4 -> selectedTextView = leftTextView
-                        5 -> selectedTextView = rightTextView
-                        6 -> selectedTextView = onTextView
-                        7 -> selectedTextView = offTextView
-                        8 -> selectedTextView = stopTextView
-                        9 -> selectedTextView = goTextView
-                    }
-                    if (selectedTextView != null) {
-                        selectedTextView!!.setBackgroundResource(R.drawable.round_corner_text_bg_selected)
-                        val score = (result.score * 100).roundToInt().toString() + "%"
-                        selectedTextView!!.text = selectedTextView!!.text.toString() + "\n" + score
-                        selectedTextView!!.setTextColor(
-                            resources.getColor(android.R.color.holo_orange_light)
-                        )
-                        handler.postDelayed({
-                            val originalString =
-                                selectedTextView!!.text.toString().replace(score, "")
-                                    .trim { it <= ' ' }
-                            selectedTextView!!.text = originalString
-                            selectedTextView!!.setBackgroundResource(R.drawable.round_corner_text_bg_unselected)
-                            selectedTextView!!.setTextColor(resources.getColor(android.R.color.darker_gray))
-                        }, 750)
-                    }
-                }
-            }
+            Log.v(LOG_TAG, output.toString())
+
             try { // We don't need to run too frequently, so snooze for a bit.
                 Thread.sleep(MINIMUM_TIME_BETWEEN_SAMPLES_MS)
             } catch (e: InterruptedException) {
