@@ -2,6 +2,7 @@ package com.cupofme.teststand
 
 import android.content.res.AssetManager
 import android.os.Bundle
+import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import be.tarsos.dsp.AudioDispatcher
 import be.tarsos.dsp.AudioEvent
@@ -70,30 +71,34 @@ class NNActivity : AppCompatActivity() {
             throw RuntimeException(e)
         }
 
-        val outputScores = Array(1) { FloatArray(labels.size) }
-        val output: MutableMap<Int, Any> = HashMap()
-        output[0] = outputScores
-        val input = FloatArray(216) { 0.2f }
-        tfLite?.runForMultipleInputsOutputs(arrayOf(input), output)
+        val mfccs = mfcc("audio/03-01-06-02-01-01-09.wav")
 
-        mfcc()
+        mfccs.forEach { mfcc ->
+            val outputScores = arrayOf(FloatArray(labels.size))
+            val output: MutableMap<Int, Any> = HashMap()
+            output[0] = outputScores
+            tfLite?.runForMultipleInputsOutputs(arrayOf(mfcc), output)
+            val array = output[0] as Array<FloatArray>
+            array.forEach {
+                Log.d("EMOTIONS", labels[it.indexOf(it.max()!!)])
+            }
+        }
     }
 
-
-    private fun mfcc() {
-        val sampleRate = 16000
+    private fun mfcc(assetName: String): List<FloatArray> {
+        val sampleRate = 16000f
         val bufferSize = 512
         val bufferOverlap = 128
         AndroidFFMPEGLocator(this)
         val mfccList: MutableList<FloatArray> = ArrayList(200)
-        val inStream: InputStream = assets.open("audio/03-01-06-02-01-01-09.wav")
+        val inStream: InputStream = assets.open(assetName)
         val dispatcher = AudioDispatcher(
             UniversalAudioInputStream(
                 inStream,
-                TarsosDSPAudioFormat(sampleRate.toFloat(), bufferSize, 1, true, true)
+                TarsosDSPAudioFormat(sampleRate, bufferSize, 1, true, true)
             ), bufferSize, bufferOverlap
         )
-        val mfcc = MFCC(bufferSize, sampleRate.toFloat(), 20, 50, 300f, 3000f)
+        val mfcc = MFCC(bufferSize, sampleRate, 216, 50, 300f, 3000f)
         dispatcher.addAudioProcessor(mfcc)
         dispatcher.addAudioProcessor(object : AudioProcessor {
             override fun processingFinished() {}
@@ -103,5 +108,6 @@ class NNActivity : AppCompatActivity() {
             }
         })
         dispatcher.run()
+        return mfccList
     }
 }
