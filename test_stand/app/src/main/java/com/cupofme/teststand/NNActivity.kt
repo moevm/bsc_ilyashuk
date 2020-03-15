@@ -36,7 +36,7 @@ class NNActivity : AppCompatActivity() {
     private var tfLite: Interpreter? = null
 
     companion object {
-        private const val MODEL_FILENAME = "file:///android_asset/emotion_recognition.tflite"
+        private const val MODEL_FILENAME = "file:///android_asset/model.tflite"
 
         @Throws(IOException::class)
         private fun loadModelFile(assets: AssetManager, modelFilename: String): MappedByteBuffer {
@@ -70,6 +70,8 @@ class NNActivity : AppCompatActivity() {
         } catch (e: Exception) {
             throw RuntimeException(e)
         }
+
+        val a = tfLite?.getInputTensor(0)
 
         val mfccs = mfcc("audio/03-01-06-02-01-01-09.wav")
 
