@@ -71,26 +71,28 @@ class NNActivity : AppCompatActivity() {
             throw RuntimeException(e)
         }
 
-        val a = tfLite?.getInputTensor(0)
+        val rawMfcc = mfcc("audio/03-01-07-02-01-01-09.wav")
 
-        val mfccs = mfcc("audio/03-01-06-02-01-01-09.wav")
+        //val mfccs = rawMfcc.flatMap { it.map { it } }.take(216).toFloatArray()
 
-        mfccs.forEach { mfcc ->
-            val outputScores = arrayOf(FloatArray(labels.size))
-            val output: MutableMap<Int, Any> = HashMap()
-            output[0] = outputScores
-            tfLite?.runForMultipleInputsOutputs(arrayOf(mfcc), output)
-            val array = output[0] as Array<FloatArray>
-            array.forEach {
-                Log.d("EMOTIONS", labels[it.indexOf(it.max()!!)])
-            }
-        }
+        val mfccs = FloatArray(216) { Random().nextFloat() % 100 }
+
+        val outputScores = arrayOf(FloatArray(labels.size))
+        val output: MutableMap<Int, Any> = HashMap()
+        output[0] = outputScores
+        tfLite?.runForMultipleInputsOutputs(arrayOf(mfccs), output)
+        val result = (output[0] as Array<FloatArray>)[0]
+
+        Log.d("EMOTIONS", result.joinToString(""))
+        Log.d("EMOTIONS", labels[result.indexOf(result.max()!!)])
+
     }
 
     private fun mfcc(assetName: String): List<FloatArray> {
-        val sampleRate = 16000f
+        val sampleRate = 22000f
         val bufferSize = 512
         val bufferOverlap = 128
+        val numberOfFeatures = 13
         AndroidFFMPEGLocator(this)
         val mfccList: MutableList<FloatArray> = ArrayList(200)
         val inStream: InputStream = assets.open(assetName)
@@ -100,7 +102,7 @@ class NNActivity : AppCompatActivity() {
                 TarsosDSPAudioFormat(sampleRate, bufferSize, 1, true, true)
             ), bufferSize, bufferOverlap
         )
-        val mfcc = MFCC(bufferSize, sampleRate, 216, 50, 300f, 3000f)
+        val mfcc = MFCC(bufferSize, sampleRate, numberOfFeatures, 50, 300f, 3000f)
         dispatcher.addAudioProcessor(mfcc)
         dispatcher.addAudioProcessor(object : AudioProcessor {
             override fun processingFinished() {}
