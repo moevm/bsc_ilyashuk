@@ -5,16 +5,16 @@ import numpy as np
 import pandas as pd
 
 labels = [
-    'male_calm',
-    'male_sad',
-    'male_fearful',
-    'female_calm',
-    'male_fearful',
-    'male_happy',
+    'female_angry',
     'female_calm',
     'female_fearful',
+    'female_happy',
+    'female_sad',
     'male_angry',
+    'male_calm',
+    'male_fearful',
     'male_happy',
+    'male_sad',
 ]
 
 
