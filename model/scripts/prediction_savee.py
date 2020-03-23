@@ -19,7 +19,7 @@ labels = [
 
 
 def get_raw_files():
-    base_folder = '../raw_ravdess/'
+    base_folder = '../raw_savee/'
     all_files = []
     dirs = listdir(base_folder)
     for dir in dirs:
@@ -78,7 +78,7 @@ if __name__ == '__main__':
 
     predictions_labels = [labels[p] for p in predictions.argmax(axis=1)]
 
-    with open('../result_ravdess.csv', mode='w') as csv_file:
+    with open('../result_savee.csv', mode='w') as csv_file:
         writer = csv.writer(csv_file, delimiter=',',
                             quotechar='"', quoting=csv.QUOTE_MINIMAL)
 
