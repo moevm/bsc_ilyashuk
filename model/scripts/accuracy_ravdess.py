@@ -34,10 +34,32 @@ with open('../result.csv', mode='r') as csv_file:
         '-')[2] in used_emotions, rows))
 
     accuracy_only_emotions = 0
+    accuracy_gender = 0
+    accuracy_complete = 0
 
     for row in rows:
-        if int(row[2]) in matchers[row[0].split('-')[2]]:
+        splitted = row[0].split('-')
+        splitted[-1] = splitted[-1].split('.')[0]
+        if int(row[2]) in matchers[splitted[2]]:
             accuracy_only_emotions = accuracy_only_emotions + 1
+
+    for row in rows:
+        splitted = row[0].split('-')
+        splitted[-1] = splitted[-1].split('.')[0]
+        if (int(splitted[-1]) % 2 == 1 and int(row[2]) > 4) or (int(splitted[-1]) % 2 == 0 and int(row[2]) <= 4):
+            accuracy_gender = accuracy_gender + 1
+
+    for row in rows:
+        splitted = row[0].split('-')
+        splitted[-1] = splitted[-1].split('.')[0]
+        if int(row[2]) in matchers[splitted[2]] and ((int(splitted[-1]) % 2 == 1 and int(row[2]) > 4) or (int(splitted[-1]) % 2 == 0 and int(row[2]) <= 4)):
+            accuracy_complete = accuracy_complete + 1
 
     print('Ravdess accuracy for only emotions ' +
           str(accuracy_only_emotions / len(rows) * 100) + '%')
+
+    print('Ravdess gender accuracy ' +
+          str(accuracy_gender / len(rows) * 100) + '%')
+
+    print('Ravdess complete accuracy ' +
+          str(accuracy_complete / len(rows) * 100) + '%')
