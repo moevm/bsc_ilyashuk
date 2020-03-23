@@ -78,7 +78,7 @@ if __name__ == '__main__':
 
     predictions_labels = [labels[p] for p in predictions.argmax(axis=1)]
 
-    with open('../result.csv', mode='w') as csv_file:
+    with open('../result_ravdess.csv', mode='w') as csv_file:
         writer = csv.writer(csv_file, delimiter=',',
                             quotechar='"', quoting=csv.QUOTE_MINIMAL)
 
