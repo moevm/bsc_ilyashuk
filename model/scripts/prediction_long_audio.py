@@ -52,10 +52,10 @@ def divide_chunks(l, n):
 
 
 if __name__ == "__main__":
-    sound = AudioSegment.from_wav('../raw_harvard/OSR_us_000_0010_8k.wav')
+    sound = AudioSegment.from_wav('raw_harvard/OSR_us_000_0010_8k.wav')
     total_length = len(sound)
     data, sampling_rate = librosa.load(
-        '../raw_harvard/OSR_us_000_0016_8k.wav', res_type='kaiser_fast', sr=42100)
+        'raw_harvard/OSR_us_000_0016_8k.wav', res_type='kaiser_fast', sr=42100)
 
     data_per_ms = len(data) / total_length
     chunks = list(divide_chunks(data, int(data_per_ms * 2500) + 500))

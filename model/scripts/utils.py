@@ -2,23 +2,23 @@
 
 def load_model():
     from keras.models import model_from_json
-    json_file = open('../model.json', 'r')
+    json_file = open('model.json', 'r')
     loaded_model_json = json_file.read()
     json_file.close()
     loaded_model = model_from_json(loaded_model_json)
-    loaded_model.load_weights('../model.h5')
+    loaded_model.load_weights('model.h5')
     print('Loaded model')
     return loaded_model
 
 
 def get_raw_files(base_dir):
-    all_files = []
-    dirs = listdir(base_dir)
-    for dir in dirs:
-        files = listdir(base_dir + dir)
+    import os
+    f = []
+    for root, dirs, files in os.walk(base_dir):
         for file in files:
-            all_files.append(base_dir + dir + '/' + file)
-    return all_files
+            if(file[0] != '.'):
+                f.append(root + '/' + file)
+    return f
 
 
 def listdir(path):

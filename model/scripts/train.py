@@ -1,3 +1,4 @@
+import json
 import os
 
 import keras
@@ -12,11 +13,17 @@ from keras.utils import np_utils
 from sklearn.preprocessing import LabelEncoder
 from sklearn.utils import shuffle
 
+from utils import get_raw_files
+
 if __name__ == "__main__":
-    files = os.listdir('../raw/')
+    files = get_raw_files('raw')
+
+    print(files)
+
+    items = [item.split('/')[-1] for item in files]
 
     feeling_list = []
-    for item in files:
+    for item in items:
         if item[6:-16] == '02' and int(item[18:-4]) % 2 == 0:
             feeling_list.append('female_calm')
         elif item[6:-16] == '02' and int(item[18:-4]) % 2 == 1:
@@ -48,12 +55,15 @@ if __name__ == "__main__":
 
     labels = pd.DataFrame(feeling_list)
 
+    print(labels)
+
     df = pd.DataFrame(columns=['feature'])
 
     for index, y in enumerate(files):
-        if files[index][6:-16] != '01' and files[index][6:-16] != '07' and files[index][6:-16] != '08' and files[index][:2] != 'su' and files[index][:1] != 'n' and files[index][:1] != 'd':
+        file = files[index].split('/')[-1]
+        if file[6:-16] != '01' and file[6:-16] != '07' and file[6:-16] != '08' and file[:2] != 'su' and file[:1] != 'n' and file[:1] != 'd':
             X, sample_rate = librosa.load(
-                '../raw/'+y, res_type='kaiser_fast', duration=2.5, sr=22050*2, offset=0.5)
+                y, res_type='kaiser_fast', duration=2.5, sr=22050*2, offset=0.5)
             sample_rate = np.array(sample_rate)
             mfccs = np.mean(librosa.feature.mfcc(y=X,
                                                  sr=sample_rate,
@@ -117,4 +127,8 @@ if __name__ == "__main__":
     cnnhistory = model.fit(x_traincnn, y_train, batch_size=16,
                            epochs=700, validation_data=(x_testcnn, y_test))
 
-    model.save('../trained_model.h5')
+    model.save('trained_model.h5')
+
+    model_json = model.to_json()
+    with open('trained_model.json', 'w') as json_file:
+        json_file.write(model_json)

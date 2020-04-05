@@ -39,7 +39,7 @@ def extract_features(files):
 
 
 if __name__ == '__main__':
-    raw_files = get_raw_files('../raw_ravdess/')
+    raw_files = get_raw_files('raw_ravdess/')
 
     features = extract_features(raw_files)
 
@@ -53,7 +53,7 @@ if __name__ == '__main__':
 
     predictions_labels = [labels[p] for p in predictions.argmax(axis=1)]
 
-    with open('../result_ravdess.csv', mode='w') as csv_file:
+    with open('result_ravdess.csv', mode='w') as csv_file:
         writer = csv.writer(csv_file, delimiter=',',
                             quotechar='"', quoting=csv.QUOTE_MINIMAL)
 
