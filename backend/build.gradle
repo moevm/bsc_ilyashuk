@@ -25,6 +25,7 @@ sourceSets {
 repositories {
     mavenLocal()
     jcenter()
+    maven { url "https://oss.sonatype.org/content/repositories/snapshots" }
     maven { url 'https://kotlin.bintray.com/ktor' }
     maven { url 'https://kotlin.bintray.com/kotlinx' }
 }
@@ -39,5 +40,11 @@ dependencies {
     implementation "io.ktor:ktor-client-core-jvm:$ktor_version"
     implementation "io.ktor:ktor-client-json-jvm:$ktor_version"
     implementation "io.ktor:ktor-client-gson:$ktor_version"
+
+    implementation "org.deeplearning4j:deeplearning4j-core:${dl4j_version}"
+    implementation "org.nd4j:nd4j-native-platform:${dl4j_version}"
+    implementation "org.slf4j:slf4j-simple:1.7.25"
+    implementation "org.slf4j:slf4j-api:1.7.25"
+
     testImplementation "io.ktor:ktor-server-tests:$ktor_version"
 }

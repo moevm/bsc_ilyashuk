@@ -6,6 +6,7 @@ import io.ktor.routing.*
 import io.ktor.http.*
 import io.ktor.gson.*
 import io.ktor.features.*
+import org.deeplearning4j.nn.modelimport.keras.KerasModelImport
 
 fun main(args: Array<String>): Unit = io.ktor.server.netty.EngineMain.main(args)
 
@@ -18,8 +19,12 @@ fun Application.module(testing: Boolean = false) {
 
     routing {
         get("/") {
-            call.respondText("Hello diplom", contentType = ContentType.Text.Plain)
+
+            val model = KerasModelImport.importKerasSequentialModelAndWeights("./model.json", "./model.h5")
+            call.respondText("memes", contentType = ContentType.Text.Plain)
         }
+
+        
 
         get("/json/gson") {
             call.respond(mapOf("hello" to "world"))
