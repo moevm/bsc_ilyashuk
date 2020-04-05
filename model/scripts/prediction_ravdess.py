@@ -4,6 +4,8 @@ import librosa
 import numpy as np
 import pandas as pd
 
+from utils import get_raw_files, load_model
+
 labels = [
     'female_angry',
     'female_calm',
@@ -16,33 +18,6 @@ labels = [
     'male_happy',
     'male_sad',
 ]
-
-
-def get_raw_files():
-    base_folder = '../raw_ravdess/'
-    all_files = []
-    dirs = listdir(base_folder)
-    for dir in dirs:
-        files = listdir(base_folder + dir)
-        for file in files:
-            all_files.append(base_folder + dir + '/' + file)
-    return all_files
-
-
-def listdir(path):
-    import os
-    return [f for f in os.listdir(path) if not f.startswith('.')]
-
-
-def load_model():
-    from keras.models import model_from_json
-    json_file = open('../model.json', 'r')
-    loaded_model_json = json_file.read()
-    json_file.close()
-    loaded_model = model_from_json(loaded_model_json)
-    loaded_model.load_weights('../model.h5')
-    print('Loaded model')
-    return loaded_model
 
 
 def extract_features(files):
@@ -64,7 +39,7 @@ def extract_features(files):
 
 
 if __name__ == '__main__':
-    raw_files = get_raw_files()
+    raw_files = get_raw_files('../raw_ravdess/')
 
     features = extract_features(raw_files)
 

@@ -2,6 +2,7 @@ import os
 
 import keras
 import librosa
+import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 from keras.layers import (Activation, AveragePooling1D, Conv1D, Dense, Dropout,
@@ -12,10 +13,10 @@ from sklearn.preprocessing import LabelEncoder
 from sklearn.utils import shuffle
 
 if __name__ == "__main__":
-    mylist = os.listdir('../raw/')
+    files = os.listdir('../raw/')
 
     feeling_list = []
-    for item in mylist:
+    for item in files:
         if item[6:-16] == '02' and int(item[18:-4]) % 2 == 0:
             feeling_list.append('female_calm')
         elif item[6:-16] == '02' and int(item[18:-4]) % 2 == 1:
@@ -49,8 +50,8 @@ if __name__ == "__main__":
 
     df = pd.DataFrame(columns=['feature'])
 
-    for index, y in enumerate(mylist):
-        if mylist[index][6:-16] != '01' and mylist[index][6:-16] != '07' and mylist[index][6:-16] != '08' and mylist[index][:2] != 'su' and mylist[index][:1] != 'n' and mylist[index][:1] != 'd':
+    for index, y in enumerate(files):
+        if files[index][6:-16] != '01' and files[index][6:-16] != '07' and files[index][6:-16] != '08' and files[index][:2] != 'su' and files[index][:1] != 'n' and files[index][:1] != 'd':
             X, sample_rate = librosa.load(
                 '../raw/'+y, res_type='kaiser_fast', duration=2.5, sr=22050*2, offset=0.5)
             sample_rate = np.array(sample_rate)
@@ -104,11 +105,6 @@ if __name__ == "__main__":
     model.add(MaxPooling1D(pool_size=(8)))
     model.add(Conv1D(128, 5, padding='same',))
     model.add(Activation('relu'))
-    #model.add(Conv1D(128, 5,padding='same',))
-    # model.add(Activation('relu'))
-    #model.add(Conv1D(128, 5,padding='same',))
-    # model.add(Activation('relu'))
-    # model.add(Dropout(0.2))
     model.add(Conv1D(128, 5, padding='same',))
     model.add(Activation('relu'))
     model.add(Flatten())
@@ -120,3 +116,5 @@ if __name__ == "__main__":
                   optimizer=opt, metrics=['accuracy'])
     cnnhistory = model.fit(x_traincnn, y_train, batch_size=16,
                            epochs=700, validation_data=(x_testcnn, y_test))
+
+    model.save('../trained_model.h5')

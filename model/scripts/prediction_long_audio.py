@@ -4,6 +4,8 @@ import pandas as pd
 from pydub import AudioSegment
 from pydub.silence import detect_nonsilent
 
+from utils import load_model
+
 labels = [
     'female_angry',
     'female_calm',
@@ -25,16 +27,6 @@ def split(filepath):
                               min_silence_len=300,
                               silence_thresh=dBFS-16)
     return chunks
-
-
-def load_model():
-    from keras.models import model_from_json
-    json_file = open('../model.json', 'r')
-    loaded_model_json = json_file.read()
-    json_file.close()
-    loaded_model = model_from_json(loaded_model_json)
-    loaded_model.load_weights('../model.h5')
-    return loaded_model
 
 
 def extract_features(chunks):
