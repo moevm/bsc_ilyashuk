@@ -1,24 +1,15 @@
-import json
-import os
-
-import keras
 import librosa
-import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
-from keras.layers import (Activation, AveragePooling1D, Conv1D, Dense, Dropout,
-                          Embedding, Flatten, Input, MaxPooling1D)
-from keras.models import Model, Sequential
-from keras.utils import np_utils
+import tensorflow as tf
 from sklearn.preprocessing import LabelEncoder
 from sklearn.utils import shuffle
+from tensorflow import keras
 
 from utils import get_raw_files
 
 if __name__ == "__main__":
     files = get_raw_files('raw')
-
-    print(files)
 
     items = [item.split('/')[-1] for item in files]
 
@@ -54,8 +45,6 @@ if __name__ == "__main__":
             feeling_list.append('male_sad')
 
     labels = pd.DataFrame(feeling_list)
-
-    print(labels)
 
     df = pd.DataFrame(columns=['feature'])
 
@@ -98,37 +87,33 @@ if __name__ == "__main__":
 
     lb = LabelEncoder()
 
-    y_train = np_utils.to_categorical(lb.fit_transform(y_train))
-    y_test = np_utils.to_categorical(lb.fit_transform(y_test))
+    y_train = tf.keras.utils.to_categorical(lb.fit_transform(y_train))
+    y_test = tf.keras.utils.to_categorical(lb.fit_transform(y_test))
 
     x_traincnn = np.expand_dims(X_train, axis=2)
     x_testcnn = np.expand_dims(X_test, axis=2)
 
-    model = Sequential()
+    model = tf.keras.Sequential()
 
-    model.add(Conv1D(256, 5, padding='same',
-                     input_shape=(216, 1)))
-    model.add(Activation('relu'))
-    model.add(Conv1D(128, 5, padding='same'))
-    model.add(Activation('relu'))
-    model.add(Dropout(0.1))
-    model.add(MaxPooling1D(pool_size=(8)))
-    model.add(Conv1D(128, 5, padding='same',))
-    model.add(Activation('relu'))
-    model.add(Conv1D(128, 5, padding='same',))
-    model.add(Activation('relu'))
-    model.add(Flatten())
-    model.add(Dense(10))
-    model.add(Activation('softmax'))
-    opt = keras.optimizers.rmsprop(lr=0.00001, decay=1e-6)
+    model.add(tf.keras.layers.Conv1D(256, 5, padding='same',
+                                     input_shape=(216, 1)))
+    model.add(tf.keras.layers.Activation('relu'))
+    model.add(tf.keras.layers.Conv1D(128, 5, padding='same'))
+    model.add(tf.keras.layers.Activation('relu'))
+    model.add(tf.keras.layers.Dropout(0.1))
+    model.add(tf.keras.layers.MaxPooling1D(pool_size=(8)))
+    model.add(tf.keras.layers.Conv1D(128, 5, padding='same',))
+    model.add(tf.keras.layers.Activation('relu'))
+    model.add(tf.keras.layers.Conv1D(128, 5, padding='same',))
+    model.add(tf.keras.layers.Activation('relu'))
+    model.add(tf.keras.layers.Flatten())
+    model.add(tf.keras.layers.Dense(10))
+    model.add(tf.keras.layers.Activation('softmax'))
+    opt = tf.keras.optimizers.RMSprop(lr=0.00001, decay=1e-6)
 
     model.compile(loss='categorical_crossentropy',
                   optimizer=opt, metrics=['accuracy'])
     cnnhistory = model.fit(x_traincnn, y_train, batch_size=16,
                            epochs=700, validation_data=(x_testcnn, y_test))
 
-    model.save('trained_model.h5')
-
-    model_json = model.to_json()
-    with open('trained_model.json', 'w') as json_file:
-        json_file.write(model_json)
+    model.save('saved_model', save_format='tf')
