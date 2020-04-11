@@ -39,7 +39,7 @@ def extract_features(files):
 
 
 if __name__ == '__main__':
-    raw_files = get_raw_files('raw_ravdess/')
+    raw_files = get_raw_files('raw/raw_ravdess/')
 
     features = extract_features(raw_files)
 
