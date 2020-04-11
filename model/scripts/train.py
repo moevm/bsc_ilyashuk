@@ -93,27 +93,28 @@ if __name__ == "__main__":
     x_traincnn = np.expand_dims(X_train, axis=2)
     x_testcnn = np.expand_dims(X_test, axis=2)
 
-    model = tf.keras.Sequential()
+    model = tf.keras.Sequential([
+        tf.keras.layers.Conv1D(256, 5, padding='same',
+                               input_shape=(216, 1), name="input"),
+        tf.keras.layers.Activation('relu'),
+        tf.keras.layers.Conv1D(128, 5, padding='same'),
+        tf.keras.layers.Activation('relu'),
+        tf.keras.layers.Dropout(0.1),
+        tf.keras.layers.MaxPooling1D(pool_size=(8)),
+        tf.keras.layers.Conv1D(128, 5, padding='same',),
+        tf.keras.layers.Activation('relu'),
+        tf.keras.layers.Conv1D(128, 5, padding='same',),
+        tf.keras.layers.Activation('relu'),
+        tf.keras.layers.Flatten(),
+        tf.keras.layers.Dense(10),
+        tf.keras.layers.Activation('softmax', name="output"),
+    ])
 
-    model.add(tf.keras.layers.Conv1D(256, 5, padding='same',
-                                     input_shape=(216, 1)))
-    model.add(tf.keras.layers.Activation('relu'))
-    model.add(tf.keras.layers.Conv1D(128, 5, padding='same'))
-    model.add(tf.keras.layers.Activation('relu'))
-    model.add(tf.keras.layers.Dropout(0.1))
-    model.add(tf.keras.layers.MaxPooling1D(pool_size=(8)))
-    model.add(tf.keras.layers.Conv1D(128, 5, padding='same',))
-    model.add(tf.keras.layers.Activation('relu'))
-    model.add(tf.keras.layers.Conv1D(128, 5, padding='same',))
-    model.add(tf.keras.layers.Activation('relu'))
-    model.add(tf.keras.layers.Flatten())
-    model.add(tf.keras.layers.Dense(10))
-    model.add(tf.keras.layers.Activation('softmax'))
     opt = tf.keras.optimizers.RMSprop(lr=0.00001, decay=1e-6)
 
     model.compile(loss='categorical_crossentropy',
                   optimizer=opt, metrics=['accuracy'])
     cnnhistory = model.fit(x_traincnn, y_train, batch_size=16,
-                           epochs=700, validation_data=(x_testcnn, y_test))
+                           epochs=20, validation_data=(x_testcnn, y_test))
 
-    model.save('saved_model', save_format='tf')
+    model.save('saved_model_v2', save_format='tf')
