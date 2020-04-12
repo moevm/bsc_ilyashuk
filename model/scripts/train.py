@@ -95,7 +95,7 @@ if __name__ == "__main__":
 
     model = tf.keras.Sequential([
         tf.keras.layers.Conv1D(256, 5, padding='same',
-                               input_shape=(216, 1), name="input"),
+                               input_shape=(216, 1), name='input'),
         tf.keras.layers.Activation('relu'),
         tf.keras.layers.Conv1D(128, 5, padding='same'),
         tf.keras.layers.Activation('relu'),
@@ -107,14 +107,19 @@ if __name__ == "__main__":
         tf.keras.layers.Activation('relu'),
         tf.keras.layers.Flatten(),
         tf.keras.layers.Dense(10),
-        tf.keras.layers.Activation('softmax', name="output"),
+        tf.keras.layers.Activation('softmax', name='output'),
     ])
 
     opt = tf.keras.optimizers.RMSprop(lr=0.00001, decay=1e-6)
 
     model.compile(loss='categorical_crossentropy',
                   optimizer=opt, metrics=['accuracy'])
-    cnnhistory = model.fit(x_traincnn, y_train, batch_size=16,
-                           epochs=20, validation_data=(x_testcnn, y_test))
+    history = model.fit(x_traincnn, y_train, batch_size=16,
+                        epochs=700, validation_data=(x_testcnn, y_test))
 
-    model.save('saved_model_v2', save_format='tf')
+    with tf.keras.backend.get_session() as sess:
+        tf.saved_model.simple_save(
+            sess,
+            'saved_v2',
+            inputs={'input': model.input},
+            outputs={'output': model.output})
