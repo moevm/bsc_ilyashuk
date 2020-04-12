@@ -120,6 +120,6 @@ if __name__ == "__main__":
     with tf.keras.backend.get_session() as sess:
         tf.saved_model.simple_save(
             sess,
-            'saved_v2',
+            'saved_model',
             inputs={'input': model.input},
             outputs={'output': model.output})
