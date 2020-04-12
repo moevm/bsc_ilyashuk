@@ -7,6 +7,8 @@ import io.ktor.http.*
 import io.ktor.gson.*
 import io.ktor.features.*
 import org.tensorflow.SavedModelBundle
+import org.tensorflow.Tensor
+import java.nio.FloatBuffer
 
 fun main(args: Array<String>): Unit = io.ktor.server.netty.EngineMain.main(args)
 
@@ -21,16 +23,27 @@ fun Application.module(testing: Boolean = false) {
     routing {
         get("/") {
             val session = model.session()
+            val runner = session.runner()
 
-            model.graph().operations()
+            val input = Tensor.create(arrayOf<Long>(1, 216, 1).toLongArray(), FloatBuffer.allocate(216))
 
-            println(session.runner().runAndFetchMetadata().outputs)
+            runner.apply {
+                feed("input_input", input)
+                fetch("output/Softmax")
+            }
 
+            val outputTensor = runner.run()[0]
 
-            call.respondText("hello", contentType = ContentType.Text.Plain)
+            val result = FloatBuffer.allocate(10)
+
+            outputTensor.writeTo(result)
+
+            val resultArray = Array(10) {result[it]}
+
+            call.respondText(resultArray.joinToString(), contentType = ContentType.Text.Plain)
         }
 
-        get("/json/gson") {
+        get("/json") {
             call.respond(mapOf("hello" to "world"))
         }
     }
