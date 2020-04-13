@@ -1,26 +1,21 @@
-import React from 'react';
+import { inject } from 'mobx-react';
+import React, { FunctionComponent } from 'react';
 import './App.css';
-import logo from './logo.svg';
 
-function App() {
+type PublicProps = {};
+
+type PrivateProps = {
+  test: string;
+} & PublicProps;
+
+const App: FunctionComponent<PrivateProps> = (props: PrivateProps) => {
   return (
     <div className='App'>
       <header className='App-header'>
-        <img src={logo} className='App-logo' alt='logo' />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className='App-link'
-          href='https://reactjs.org'
-          target='_blank'
-          rel='noopener noreferrer'
-        >
-          Learn React
-        </a>
+        <p>{props.test}</p>
       </header>
     </div>
   );
-}
+};
 
-export default App;
+export default inject('test')(App as FunctionComponent<PublicProps>);
