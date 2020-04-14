@@ -13,8 +13,10 @@ const App: FunctionComponent<PrivateProps> = (props: PrivateProps) => {
   return (
     <div className='App'>
       <header className='App-header'>
-        <p>{props.controller.counter}</p>
-        <button onClick={props.controller.increment}>Increment</button>
+        <input type='file' onChange={props.controller.onAttachFile} />
+        <button type='submit' onClick={props.controller.upload}>
+          Upload
+        </button>
       </header>
     </div>
   );
