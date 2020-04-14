@@ -1,6 +1,8 @@
 package org.moevm.bsc_ilyashuk
 
 import io.ktor.application.*
+import io.ktor.client.HttpClient
+import io.ktor.client.request.get
 import io.ktor.response.*
 import io.ktor.routing.*
 import io.ktor.http.*
@@ -9,12 +11,8 @@ import io.ktor.features.*
 import io.ktor.http.content.PartData
 import io.ktor.http.content.forEachPart
 import io.ktor.http.content.streamProvider
-import io.ktor.request.isMultipart
 import io.ktor.request.receiveMultipart
-import kotlinx.coroutines.CoroutineDispatcher
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
-import kotlinx.coroutines.yield
+import kotlinx.coroutines.*
 import org.tensorflow.SavedModelBundle
 import org.tensorflow.Tensor
 import java.io.File
@@ -53,13 +51,14 @@ fun Application.module(testing: Boolean = false) {
 
             outputTensor.writeTo(result)
 
-            val resultArray = Array(10) {result[it]}
+            val resultArray = Array(10) { result[it] }
 
             call.respondText(resultArray.joinToString(), contentType = ContentType.Text.Plain)
         }
 
         post("/upload") {
             val multipart = call.receiveMultipart()
+            var fileName: String? = null
             multipart.forEachPart { part ->
                 if (part is PartData.FileItem) {
                     val ext = File(part.originalFileName!!).extension
@@ -67,14 +66,18 @@ fun Application.module(testing: Boolean = false) {
                         "./uploads",
                         "upload-${System.currentTimeMillis()}.$ext"
                     )
+                    fileName = file.name
                     part.streamProvider().use { input ->
                         file.outputStream().buffered().use { output -> input.copyToSuspend(output) }
                     }
-                    println(file.readLines()[0])
                 }
                 part.dispose()
             }
-            call.respondText("success", contentType = ContentType.Text.Plain)
+
+            val client = HttpClient()
+            val response = client.get<String>("http://localhost:5000?filename=$fileName")
+
+            call.respondText(response, contentType = ContentType.Text.Plain)
         }
 
         get("/json") {
