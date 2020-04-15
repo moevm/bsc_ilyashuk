@@ -18,7 +18,7 @@ export default class Controller {
     const formData = new FormData();
     formData.append('file', this.file);
 
-    const url = 'http://134.209.229.182//predict';
+    const url = 'http://134.209.229.182:8080/predict';
 
     const config = {
       headers: {
