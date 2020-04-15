@@ -1,9 +1,9 @@
 import { Provider } from 'mobx-react';
 import React from 'react';
 import ReactDOM from 'react-dom';
-import App from './App';
 import Controller from './controller';
 import './index.css';
+import App from './ui/App';
 
 const storage = {
   controller: new Controller(),
