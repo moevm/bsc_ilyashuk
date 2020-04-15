@@ -17,6 +17,7 @@ const App: FunctionComponent<PrivateProps> = (props: PrivateProps) => {
         <button type='submit' onClick={props.controller.upload}>
           Upload
         </button>
+        <p>{props.controller.result}</p>
       </header>
     </div>
   );

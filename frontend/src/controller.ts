@@ -1,12 +1,16 @@
 import axios from 'axios';
+import { action, observable } from 'mobx';
 
 export default class Controller {
   private file?: File;
+
+  @observable public result: string = '';
 
   public onAttachFile = (e: any) => {
     this.file = e.target.files[0];
   };
 
+  @action.bound
   public upload = async () => {
     if (!this.file) {
       return;
@@ -23,7 +27,6 @@ export default class Controller {
     };
 
     const resp = await axios.post(url, formData, config);
-
-    console.log(resp);
+    this.result = resp.data;
   };
 }
