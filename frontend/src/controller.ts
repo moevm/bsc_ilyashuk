@@ -14,7 +14,7 @@ export default class Controller {
     const formData = new FormData();
     formData.append('file', this.file);
 
-    const url = 'http://0.0.0.0:8080/upload';
+    const url = 'http://0.0.0.0:8080/predict';
 
     const config = {
       headers: {
