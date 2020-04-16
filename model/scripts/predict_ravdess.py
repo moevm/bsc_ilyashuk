@@ -7,16 +7,11 @@ import pandas as pd
 from utils import get_raw_files, load_model
 
 labels = [
-    'female_angry',
-    'female_calm',
-    'female_fearful',
-    'female_happy',
-    'female_sad',
-    'male_angry',
-    'male_calm',
-    'male_fearful',
-    'male_happy',
-    'male_sad',
+    'angry',
+    'calm',
+    'fearful',
+    'happy',
+    'sad',
 ]
 
 
