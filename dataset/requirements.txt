@@ -1,4 +1,0 @@
-numpy
-scipy
-youtube-dl
-pydub
