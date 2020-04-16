@@ -4,6 +4,8 @@ import { action, observable } from 'mobx';
 export default class Controller {
   private file?: File;
 
+  @observable public uploadProgress = 0;
+
   @observable public result: string = '';
 
   public onAttachFile = (e: any) => {
@@ -22,9 +24,9 @@ export default class Controller {
 
     const config = {
       onUploadProgress: (progressEvent: ProgressEvent) =>
-        console.log(
-          Math.round((progressEvent.loaded * 100) / progressEvent.total)
-        ),
+        (this.uploadProgress = Math.round(
+          (progressEvent.loaded * 100) / progressEvent.total
+        )),
       headers: {
         'content-type': 'multipart/form-data',
       },

@@ -2,7 +2,7 @@ import { createStyles, makeStyles, Theme } from '@material-ui/core';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
-    app: {
+    container: {
       backgroundColor: '#282c34',
       minHeight: '100vh',
       flexDirection: 'column',

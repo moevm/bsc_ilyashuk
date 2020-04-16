@@ -13,7 +13,7 @@ type PrivateProps = {
 const FileUploader: FunctionComponent<PrivateProps> = (props: PrivateProps) => {
   const classes = useStyles();
   return (
-    <div className={classes.uploader}>
+    <div className={classes.container}>
       <input
         type='file'
         onChange={props.controller.onAttachFile}
@@ -23,13 +23,16 @@ const FileUploader: FunctionComponent<PrivateProps> = (props: PrivateProps) => {
       <Button
         onClick={props.controller.upload}
         variant='contained'
-        disableElevation
         className={classes.uploadButton}
       >
         Upload
       </Button>
 
-      <LinearProgress variant='determinate' value={50} />
+      <LinearProgress
+        variant='determinate'
+        value={props.controller.uploadProgress}
+        className={classes.progressBar}
+      />
     </div>
   );
 };

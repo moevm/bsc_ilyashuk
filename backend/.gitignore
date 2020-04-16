@@ -5,5 +5,5 @@
 *.iml
 *.ipr
 *.iws
-wav
+*.wav
 venv

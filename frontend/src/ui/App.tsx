@@ -13,7 +13,7 @@ type PrivateProps = {
 const App: FunctionComponent<PrivateProps> = (props: PrivateProps) => {
   const classes = useStyles();
   return (
-    <div className={classes.app}>
+    <div className={classes.container}>
       <header className={classes.header}>
         <FileUploader />
       </header>
