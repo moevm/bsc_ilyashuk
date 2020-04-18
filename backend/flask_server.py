@@ -11,7 +11,7 @@ def extract_features():
     filename = request.args.get('filename')
 
     data, sample_rate = librosa.load(
-        './uploads/' + filename, res_type='kaiser_fast', duration=2.5, sr=22050*2, offset=0.5)
+        './uploads/' + filename, res_type='kaiser_fast')
     sample_rate = np.array(sample_rate)
     mfccs = np.mean(librosa.feature.mfcc(y=data,
                                          sr=sample_rate,

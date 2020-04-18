@@ -33,6 +33,7 @@ export default class Controller {
     };
 
     const resp = await axios.post(url, formData, config);
+    console.log(resp);
     this.result = resp.data;
   };
 }

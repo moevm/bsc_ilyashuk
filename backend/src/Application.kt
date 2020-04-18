@@ -27,6 +27,19 @@ fun Application.module(testing: Boolean = false) {
     }
     val model = SavedModelBundle.load("saved_model", "serve")
 
+    val labels = arrayOf(
+        "female_angry",
+        "female_calm",
+        "female_fearful",
+        "female_happy",
+        "female_sad",
+        "male_angry",
+        "male_calm",
+        "male_fearful",
+        "male_happy",
+        "male_sad"
+    )
+
     routing {
         get("/") {
             call.respondText("bsc_ilyashuk", contentType = ContentType.Text.Plain)
@@ -41,40 +54,28 @@ fun Application.module(testing: Boolean = false) {
 
             val features = client.get<Features>("http://localhost:5000?filename=${file.name}")
 
-            // Prediction
-            val session = model.session()
-            val runner = session.runner()
+            val predictions = ArrayList<FloatBuffer>()
 
-            val input = Tensor.create(
-                arrayOf<Long>(1, 216, 1).toLongArray(),
-                FloatBuffer.wrap(features.data.toFloatArray())
-            )
+            for (i in 0 until features.data.size / 216) {
+                val session = model.session()
+                val runner = session.runner()
 
-            runner.apply {
-                feed("input_input", input)
-                fetch("output/Softmax")
+                val input = Tensor.create(
+                    arrayOf<Long>(1, 216, 1).toLongArray(),
+                    FloatBuffer.wrap(features.data.slice((i * 216) until (((i + 1) * 216))).toFloatArray())
+                )
+
+                runner.apply {
+                    feed("input_input", input)
+                    fetch("output/Softmax")
+                }
+                val outputTensor = runner.run()[0]
+                FloatBuffer.allocate(10).apply {
+                    outputTensor.writeTo(this)
+                    predictions.add(this)
+                }
             }
-            val outputTensor = runner.run()[0]
-            val result = FloatBuffer.allocate(10).apply {
-                outputTensor.writeTo(this)
-            }
-            val resultArray = Array(10) { result[it] }
-            val labels = arrayOf(
-                "female_angry",
-                "female_calm",
-                "female_fearful",
-                "female_happy",
-                "female_sad",
-                "male_angry",
-                "male_calm",
-                "male_fearful",
-                "male_happy",
-                "male_sad"
-            )
-
-            val resultLabel = labels[resultArray.indexOf(resultArray.max())]
-
-            call.respondText(resultLabel, contentType = ContentType.Text.Plain)
+            call.respond(predictions.map { it.array() })
         }
     }
 }
