@@ -1,6 +1,7 @@
 import { inject, observer } from 'mobx-react';
 import React, { FunctionComponent } from 'react';
 import Controller from '../controller';
+import EmotionsChart from './components/EmotionsChart/EmotionsChart';
 import FileUploader from './components/FileUploader/FileUploader';
 import useStyles from './styles';
 
@@ -16,6 +17,7 @@ const App: FunctionComponent<PrivateProps> = (props: PrivateProps) => {
     <div className={classes.container}>
       <header className={classes.header}>
         <FileUploader />
+        <EmotionsChart />
       </header>
     </div>
   );

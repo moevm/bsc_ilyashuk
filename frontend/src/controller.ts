@@ -1,12 +1,14 @@
 import axios from 'axios';
 import { action, observable } from 'mobx';
+import { labels } from './labels';
 
 export default class Controller {
   private file?: File;
 
   @observable public uploadProgress = 0;
 
-  @observable public result: string = '';
+  @observable
+  public chartData: any[] = [];
 
   public onAttachFile = (e: any) => {
     this.file = e.target.files[0];
@@ -32,8 +34,22 @@ export default class Controller {
       },
     };
 
-    const resp = await axios.post(url, formData, config);
-    console.log(resp);
-    this.result = resp.data;
+    axios.post(url, formData, config).then((response) => {
+      this.formChartData(response.data);
+    });
+  };
+
+  @action.bound
+  public formChartData = (data: any) => {
+    const res: any[] = [];
+    data.forEach((prediction: number[], index: number) => {
+      var chartData: any = {};
+      chartData.time = index;
+      labels.forEach((label, labelIndex) => {
+        chartData[label] = prediction[labelIndex];
+      });
+      res.push(chartData);
+    });
+    this.chartData = res;
   };
 }
