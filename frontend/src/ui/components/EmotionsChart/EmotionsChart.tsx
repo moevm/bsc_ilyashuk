@@ -1,6 +1,7 @@
 import { inject, observer } from 'mobx-react';
 import React, { FunctionComponent } from 'react';
 import {
+  Brush,
   CartesianGrid,
   Legend,
   Line,
@@ -49,7 +50,7 @@ const EmotionsChart: FunctionComponent<PrivateProps> = (
         <CartesianGrid strokeDasharray='3 3' />
         <XAxis dataKey='time' />
         <YAxis />
-
+        <Brush dataKey='time' height={30} stroke='#8884d8' />
         <Tooltip />
         <Legend />
       </LineChart>

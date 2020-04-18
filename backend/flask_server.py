@@ -10,11 +10,13 @@ app = Flask(__name__)
 def extract_features():
     filename = request.args.get('filename')
 
-    data, sample_rate = librosa.load(
-        './uploads/' + filename, res_type='kaiser_fast')
-    sample_rate = np.array(sample_rate)
+    sr = librosa.core.get_samplerate('./uploads/' + filename)
+
+    data, sr = librosa.load(
+        './uploads/' + filename, res_type='kaiser_fast', sr=sr)
+    sr = np.array(sr)
     mfccs = np.mean(librosa.feature.mfcc(y=data,
-                                         sr=sample_rate,
+                                         sr=sr,
                                          n_mfcc=13),
                     axis=0)
 
