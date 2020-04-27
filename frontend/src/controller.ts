@@ -1,6 +1,6 @@
 import axios from 'axios';
 import { action, observable } from 'mobx';
-import { labels } from './labels';
+import { labels } from './config/labels';
 
 export default class Controller {
   private file?: File;

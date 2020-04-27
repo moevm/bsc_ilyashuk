@@ -10,8 +10,8 @@ import {
   XAxis,
   YAxis,
 } from 'recharts';
+import { labelColors, labels } from '../../../config/labels';
 import Controller from '../../../controller';
-import { labelColors, labels } from '../../../labels';
 import useStyles from './styles';
 
 type PublicProps = {};
@@ -48,11 +48,12 @@ const EmotionsChart: FunctionComponent<PrivateProps> = (
         ))}
 
         <CartesianGrid strokeDasharray='3 3' />
-        <XAxis dataKey='time' />
-        <YAxis />
+
+        <Legend />
         <Brush dataKey='time' height={30} stroke='#8884d8' />
         <Tooltip />
-        <Legend />
+        <XAxis dataKey='time' />
+        <YAxis />
       </LineChart>
     </div>
   );

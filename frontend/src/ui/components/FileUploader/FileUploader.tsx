@@ -23,6 +23,7 @@ const FileUploader: FunctionComponent<PrivateProps> = (props: PrivateProps) => {
       <Button
         onClick={props.controller.upload}
         variant='contained'
+        color='primary'
         className={classes.uploadButton}
       >
         Upload
