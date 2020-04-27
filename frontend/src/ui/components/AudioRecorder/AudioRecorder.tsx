@@ -24,6 +24,7 @@ const AudioRecorder: FunctionComponent<PrivateProps> = (
         strokeColor={primaryColor}
         className={classes.audio}
         record={props.controller.recorder.isRecording}
+        onStop={props.controller.recorder.onRecordCompleted}
       />
       <div className={classes.buttons}>
         <Button
