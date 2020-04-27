@@ -1,9 +1,10 @@
 import { createStyles, makeStyles, Theme } from '@material-ui/core';
+import { backgroundColor } from '../config/style';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     container: {
-      backgroundColor: '#282c34',
+      backgroundColor: backgroundColor,
       minHeight: '100vh',
       flexDirection: 'column',
     },

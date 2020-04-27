@@ -11,13 +11,13 @@ import {
   YAxis,
 } from 'recharts';
 import { labelColors, labels } from '../../../config/labels';
-import Controller from '../../../controller';
+import MainController from '../../../controllers/App/controller';
 import useStyles from './styles';
 
 type PublicProps = {};
 
 type PrivateProps = {
-  controller: Controller;
+  controller: MainController;
 } & PublicProps;
 
 const EmotionsChart: FunctionComponent<PrivateProps> = (

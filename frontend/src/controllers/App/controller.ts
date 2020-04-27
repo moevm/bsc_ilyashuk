@@ -1,8 +1,11 @@
 import axios from 'axios';
 import { action, observable } from 'mobx';
-import { labels } from './config/labels';
+import { labels } from '../../config/labels';
+import AudioRecorderController from './AudioRecorder/controller';
 
-export default class Controller {
+export default class MainController {
+  public readonly recorder = new AudioRecorderController();
+
   private file?: File;
 
   @observable public uploadProgress = 0;

@@ -1,12 +1,12 @@
 import { Provider } from 'mobx-react';
 import React from 'react';
 import ReactDOM from 'react-dom';
-import Controller from './controller';
+import MainController from './controllers/App/controller';
 import './index.css';
 import App from './ui/App';
 
 const storage = {
-  controller: new Controller(),
+  controller: new MainController(),
 };
 
 ReactDOM.render(

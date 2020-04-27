@@ -1,13 +1,13 @@
 import { Button, LinearProgress } from '@material-ui/core';
 import { inject, observer } from 'mobx-react';
 import React, { FunctionComponent } from 'react';
-import Controller from '../../../controller';
+import MainController from '../../../controllers/App/controller';
 import useStyles from './styles';
 
 type PublicProps = {};
 
 type PrivateProps = {
-  controller: Controller;
+  controller: MainController;
 } & PublicProps;
 
 const FileUploader: FunctionComponent<PrivateProps> = (props: PrivateProps) => {
