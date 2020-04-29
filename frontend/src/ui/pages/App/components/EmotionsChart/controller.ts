@@ -3,7 +3,15 @@ import { labels } from '../../../../../config/labels';
 
 export default class EmotionsChartController {
   @observable
+  public selectedFilterIndex = -1;
+
+  @observable
   public chartData: any[] = [];
+
+  @action.bound
+  public onFilterSelected = (event: React.ChangeEvent<{ value: unknown }>) => {
+    this.selectedFilterIndex = event.target.value as number;
+  };
 
   @action.bound
   public formChartData = (predictions: number[][]) => {

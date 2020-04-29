@@ -1,17 +1,25 @@
 import { createStyles, makeStyles, Theme } from '@material-ui/core';
+import { primaryColor } from '../../../../../config/style';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     container: {
       width: '40vw',
       display: 'flex',
-      flexDirection: 'row',
+      flexDirection: 'column',
       alignItems: 'center',
       justifyContent: 'center',
-      marginTop: '10px',
+      marginTop: '30px',
+    },
+    input: {
+      border: 'solid',
+      borderWidth: 2,
+      borderColor: primaryColor,
+      borderRadius: 2,
+      padding: '10px',
     },
     uploadButton: {
-      marginRight: '10px',
+      marginTop: '10px',
     },
     progressBar: {
       marginTop: '10px',

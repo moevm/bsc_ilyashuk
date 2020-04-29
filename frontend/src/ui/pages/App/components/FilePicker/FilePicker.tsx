@@ -14,6 +14,13 @@ const FilePicker: FunctionComponent<PrivateProps> = (props: PrivateProps) => {
   const classes = useStyles();
   return (
     <div className={classes.container}>
+      <input
+        type='file'
+        onChange={props.controller.onAttachFile}
+        accept='.wav'
+        className={classes.input}
+      />
+
       <Button
         onClick={props.controller.uploadAttachment}
         variant='contained'
@@ -22,11 +29,6 @@ const FilePicker: FunctionComponent<PrivateProps> = (props: PrivateProps) => {
       >
         Upload
       </Button>
-      <input
-        type='file'
-        onChange={props.controller.onAttachFile}
-        accept='.wav'
-      />
 
       {/* <LinearProgress
         variant='determinate'
