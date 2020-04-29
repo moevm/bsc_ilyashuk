@@ -10,12 +10,12 @@ type PrivateProps = {
   controller: MainController;
 } & PublicProps;
 
-const FileUploader: FunctionComponent<PrivateProps> = (props: PrivateProps) => {
+const FilePicker: FunctionComponent<PrivateProps> = (props: PrivateProps) => {
   const classes = useStyles();
   return (
     <div className={classes.container}>
       <Button
-        onClick={props.controller.upload}
+        onClick={props.controller.uploadAttachment}
         variant='contained'
         color='primary'
         className={classes.uploadButton}
@@ -38,5 +38,5 @@ const FileUploader: FunctionComponent<PrivateProps> = (props: PrivateProps) => {
 };
 
 export default inject('controller')(
-  observer(FileUploader as FunctionComponent<PublicProps>)
+  observer(FilePicker as FunctionComponent<PublicProps>)
 );

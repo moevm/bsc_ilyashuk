@@ -17,27 +17,22 @@ const AudioRecorder: FunctionComponent<PrivateProps> = (
 ) => {
   const classes = useStyles();
 
-  const recorderController = props.controller.recorder;
-
   return (
     <div className={classes.container}>
       <ReactMic
         backgroundColor={backgroundColor}
         strokeColor={primaryColor}
         className={classes.audio}
-        record={recorderController.isRecording}
-        onData={recorderController.onAudioData}
-        onStop={recorderController.onRecordCompleted}
+        record={props.controller.isRecording}
+        onStop={props.controller.onRecordCompleted}
       />
       <div className={classes.buttons}>
         <Button
           variant='contained'
-          color={recorderController.isRecording ? 'secondary' : 'primary'}
-          onClick={recorderController.changeRecordingState}
+          color={props.controller.isRecording ? 'secondary' : 'primary'}
+          onClick={props.controller.changeRecordingState}
         >
-          {recorderController.isRecording
-            ? 'Stop recording'
-            : 'Start recording'}
+          {props.controller.isRecording ? 'Stop recording' : 'Start recording'}
         </Button>
       </div>
     </div>

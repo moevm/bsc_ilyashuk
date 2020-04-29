@@ -11,6 +11,7 @@ import {
   YAxis,
 } from 'recharts';
 import { labelColors, labels } from '../../../../../config/labels';
+import { primaryColor } from '../../../../../config/style';
 import MainController from '../../controller';
 import useStyles from './styles';
 
@@ -24,37 +25,40 @@ const EmotionsChart: FunctionComponent<PrivateProps> = (
   props: PrivateProps
 ) => {
   const classes = useStyles();
+  const chartController = props.controller.chart;
 
   return (
     <div className={classes.container}>
-      <LineChart
-        width={1000} //TODO: Fix size
-        height={400}
-        data={props.controller.chartData}
-        margin={{
-          top: 5,
-          right: 30,
-          left: 20,
-          bottom: 5,
-        }}
-      >
-        {labels.map((element, index) => (
-          <Line
-            type='monotone'
-            dataKey={element}
-            stroke={labelColors[index]}
-            key={index}
-          />
-        ))}
+      {chartController.chartData.length != 0 ? (
+        <LineChart
+          width={1000} //TODO: Fix size
+          height={400}
+          data={chartController.chartData}
+          margin={{
+            top: 5,
+            right: 30,
+            left: 20,
+            bottom: 5,
+          }}
+        >
+          {labels.map((element, index) => (
+            <Line
+              type='monotone'
+              dataKey={element}
+              stroke={labelColors[index]}
+              key={index}
+            />
+          ))}
 
-        <CartesianGrid strokeDasharray='3 3' />
+          <CartesianGrid strokeDasharray='3 3' />
 
-        <Legend />
-        <Brush dataKey='time' height={30} stroke='#8884d8' />
-        <Tooltip />
-        <XAxis dataKey='time' />
-        <YAxis />
-      </LineChart>
+          <Legend />
+          <Brush dataKey='time' height={30} stroke={primaryColor} />
+          <Tooltip />
+          <XAxis dataKey='time' />
+          <YAxis />
+        </LineChart>
+      ) : null}
     </div>
   );
 };

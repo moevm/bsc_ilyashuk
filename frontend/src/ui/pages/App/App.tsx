@@ -2,7 +2,7 @@ import { inject, observer } from 'mobx-react';
 import React, { FunctionComponent } from 'react';
 import AudioRecorder from './components/AudioRecorder/AudioRecorder';
 import EmotionsChart from './components/EmotionsChart/EmotionsChart';
-import FileUploader from './components/FileUploader/FileUploader';
+import FileUploader from './components/FilePicker/FilePicker';
 import MainController from './controller';
 import useStyles from './styles';
 
