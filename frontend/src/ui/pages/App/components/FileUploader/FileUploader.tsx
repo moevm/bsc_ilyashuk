@@ -1,7 +1,7 @@
-import { Button, LinearProgress } from '@material-ui/core';
+import { Button } from '@material-ui/core';
 import { inject, observer } from 'mobx-react';
 import React, { FunctionComponent } from 'react';
-import MainController from '../../../controllers/App/controller';
+import MainController from '../../controller';
 import useStyles from './styles';
 
 type PublicProps = {};
@@ -14,12 +14,6 @@ const FileUploader: FunctionComponent<PrivateProps> = (props: PrivateProps) => {
   const classes = useStyles();
   return (
     <div className={classes.container}>
-      <input
-        type='file'
-        onChange={props.controller.onAttachFile}
-        accept='.wav'
-      />
-
       <Button
         onClick={props.controller.upload}
         variant='contained'
@@ -28,12 +22,17 @@ const FileUploader: FunctionComponent<PrivateProps> = (props: PrivateProps) => {
       >
         Upload
       </Button>
+      <input
+        type='file'
+        onChange={props.controller.onAttachFile}
+        accept='.wav'
+      />
 
-      <LinearProgress
+      {/* <LinearProgress
         variant='determinate'
         value={props.controller.uploadProgress}
         className={classes.progressBar}
-      />
+      /> */}
     </div>
   );
 };

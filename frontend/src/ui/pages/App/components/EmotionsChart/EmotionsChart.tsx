@@ -10,8 +10,8 @@ import {
   XAxis,
   YAxis,
 } from 'recharts';
-import { labelColors, labels } from '../../../config/labels';
-import MainController from '../../../controllers/App/controller';
+import { labelColors, labels } from '../../../../../config/labels';
+import MainController from '../../controller';
 import useStyles from './styles';
 
 type PublicProps = {};

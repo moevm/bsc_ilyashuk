@@ -11,6 +11,7 @@ export default class AudioRecorderController {
   };
 
   public onRecordCompleted = (stopEvent: ReactMicStopEvent) => {
+    console.log(stopEvent);
     const file = new File([stopEvent.blob], 'recording.webm', {
       type: 'audio/webm',
     });
@@ -27,5 +28,9 @@ export default class AudioRecorderController {
     };
 
     axios.post(url, formData, config).then(console.log);
+  };
+
+  public onAudioData = (blob: Blob) => {
+    console.log(blob);
   };
 }

@@ -2,8 +2,8 @@ import { Button } from '@material-ui/core';
 import { inject, observer } from 'mobx-react';
 import React, { FunctionComponent } from 'react';
 import { ReactMic } from 'react-mic';
-import { backgroundColor, primaryColor } from '../../../config/style';
-import MainController from '../../../controllers/App/controller';
+import { backgroundColor, primaryColor } from '../../../../../config/style';
+import MainController from '../../controller';
 import useStyles from './styles';
 
 type PublicProps = {};
@@ -17,22 +17,27 @@ const AudioRecorder: FunctionComponent<PrivateProps> = (
 ) => {
   const classes = useStyles();
 
+  const recorderController = props.controller.recorder;
+
   return (
     <div className={classes.container}>
       <ReactMic
         backgroundColor={backgroundColor}
         strokeColor={primaryColor}
         className={classes.audio}
-        record={props.controller.recorder.isRecording}
-        onStop={props.controller.recorder.onRecordCompleted}
+        record={recorderController.isRecording}
+        onData={recorderController.onAudioData}
+        onStop={recorderController.onRecordCompleted}
       />
       <div className={classes.buttons}>
         <Button
           variant='contained'
-          color='primary'
-          onClick={props.controller.recorder.changeRecordingState}
+          color={recorderController.isRecording ? 'secondary' : 'primary'}
+          onClick={recorderController.changeRecordingState}
         >
-          {props.controller.recorder.isRecording ? 'Stop' : 'Start'}
+          {recorderController.isRecording
+            ? 'Stop recording'
+            : 'Start recording'}
         </Button>
       </div>
     </div>

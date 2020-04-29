@@ -1,7 +1,7 @@
 import axios from 'axios';
 import { action, observable } from 'mobx';
-import { labels } from '../../config/labels';
-import AudioRecorderController from './AudioRecorder/controller';
+import { labels } from '../../../config/labels';
+import AudioRecorderController from './components/AudioRecorder/controller';
 
 export default class MainController {
   public readonly recorder = new AudioRecorderController();

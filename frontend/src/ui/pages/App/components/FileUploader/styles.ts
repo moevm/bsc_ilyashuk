@@ -3,14 +3,15 @@ import { createStyles, makeStyles, Theme } from '@material-ui/core';
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     container: {
-      width: '40%',
+      width: '30vw',
       display: 'flex',
-      flexDirection: 'column',
-      flex: 1,
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'center',
+      marginTop: '10px',
     },
     uploadButton: {
-      width: '10vh',
-      marginTop: '10px',
+      marginRight: '10px',
     },
     progressBar: {
       marginTop: '10px',

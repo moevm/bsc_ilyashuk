@@ -1,19 +1,17 @@
 import { Provider } from 'mobx-react';
 import React from 'react';
 import ReactDOM from 'react-dom';
-import MainController from './controllers/App/controller';
 import './index.css';
-import App from './ui/App';
+import App from './ui/pages/App/App';
+import MainController from './ui/pages/App/controller';
 
 const storage = {
   controller: new MainController(),
 };
 
 ReactDOM.render(
-  <React.StrictMode>
-    <Provider {...storage}>
-      <App />
-    </Provider>
-  </React.StrictMode>,
+  <Provider {...storage}>
+    <App />
+  </Provider>,
   document.getElementById('root')
 );
