@@ -18,7 +18,7 @@ export default class EmotionsChartController {
     const res: any[] = [];
     predictions.forEach((prediction: number[], index: number) => {
       var chartData: any = {};
-      chartData.time = index;
+      chartData.time = index * 2.5;
       labels.forEach((label, labelIndex) => {
         chartData[label] = prediction[labelIndex];
       });

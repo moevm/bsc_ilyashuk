@@ -1,7 +1,10 @@
 import axios from 'axios';
 
 export default class PredictionService {
-  public static predict = async (file: File): Promise<number[][]> => {
+  public static predict = async (
+    file: File,
+    onProgress: (progress: ProgressEvent) => void
+  ): Promise<number[][]> => {
     const formData = new FormData();
     formData.append('file', file);
 
@@ -11,6 +14,7 @@ export default class PredictionService {
       headers: {
         'content-type': 'multipart/form-data',
       },
+      onUploadProgress: onProgress,
     };
 
     const response = await axios.post(url, formData, config);

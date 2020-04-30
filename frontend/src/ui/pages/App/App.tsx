@@ -3,6 +3,7 @@ import React, { FunctionComponent } from 'react';
 import AudioRecorder from './components/AudioRecorder/AudioRecorder';
 import EmotionsChart from './components/EmotionsChart/EmotionsChart';
 import FileUploader from './components/FilePicker/FilePicker';
+import ProgressBar from './components/ProgressBar/ProgressBar';
 import MainController from './controller';
 import useStyles from './styles';
 
@@ -19,6 +20,7 @@ const App: FunctionComponent<PrivateProps> = (props: PrivateProps) => {
       <header className={classes.header}>
         <AudioRecorder />
         <FileUploader />
+        <ProgressBar />
         <EmotionsChart />
       </header>
     </div>

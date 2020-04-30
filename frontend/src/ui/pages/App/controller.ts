@@ -9,6 +9,8 @@ export default class MainController {
   private file?: File;
 
   @observable public uploadProgress = 0;
+  @observable public isRecording = false;
+  @observable public isPredicted = false;
 
   public onAttachFile = (e: any) => {
     this.file = e.target.files[0];
@@ -19,12 +21,8 @@ export default class MainController {
     if (!this.file) {
       return;
     }
-    const prediction = await PredictionService.predict(this.file);
-
-    this.chart.formChartData(prediction);
+    this.predict(this.file);
   };
-
-  @observable public isRecording = false;
 
   @action.bound
   public changeRecordingState = () => {
@@ -36,8 +34,21 @@ export default class MainController {
       type: 'audio/webm',
     });
 
-    const prediction = await PredictionService.predict(file);
+    this.predict(file);
+  };
 
+  private predict = async (file: File) => {
+    this.isPredicted = false;
+    const prediction = await PredictionService.predict(
+      file,
+      this.onUploadProgress
+    );
     this.chart.formChartData(prediction);
+    this.isPredicted = true;
+  };
+
+  @action.bound
+  private onUploadProgress = (event: ProgressEvent) => {
+    this.uploadProgress = (event.loaded / event.total) * 100;
   };
 }

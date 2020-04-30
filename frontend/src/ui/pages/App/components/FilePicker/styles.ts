@@ -4,7 +4,7 @@ import { primaryColor } from '../../../../../config/style';
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     container: {
-      width: '40vw',
+      width: '40vmax',
       display: 'flex',
       flexDirection: 'column',
       alignItems: 'center',
@@ -19,9 +19,6 @@ const useStyles = makeStyles((theme: Theme) =>
       padding: '10px',
     },
     uploadButton: {
-      marginTop: '10px',
-    },
-    progressBar: {
       marginTop: '10px',
     },
   })
