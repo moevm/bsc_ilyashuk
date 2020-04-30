@@ -8,7 +8,7 @@ export default class PredictionService {
     const formData = new FormData();
     formData.append('file', file);
 
-    const url = 'http://localhost:8080/predict';
+    const url = 'http://64.225.111.172:8080/predict';
 
     const config = {
       headers: {
