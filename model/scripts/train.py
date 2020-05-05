@@ -15,26 +15,34 @@ if __name__ == "__main__":
 
     feeling_list = []
     for item in items:
-        if item[6:-16] == '02':
-            feeling_list.append('calm')
-        elif item[6:-16] == '03':
-            feeling_list.append('happy')
-        elif item[6:-16] == '04':
-            feeling_list.append('sad')
-        elif item[6:-16] == '05':
-            feeling_list.append('angry')
-        elif item[6:-16] == '06':
-            feeling_list.append('fearful')
+        if item[6:-16] == '02' and int(item[18:-4]) % 2 == 0:
+            feeling_list.append('female_calm')
+        elif item[6:-16] == '02' and int(item[18:-4]) % 2 == 1:
+            feeling_list.append('male_calm')
+        elif item[6:-16] == '03' and int(item[18:-4]) % 2 == 0:
+            feeling_list.append('female_happy')
+        elif item[6:-16] == '03' and int(item[18:-4]) % 2 == 1:
+            feeling_list.append('male_happy')
+        elif item[6:-16] == '04' and int(item[18:-4]) % 2 == 0:
+            feeling_list.append('female_sad')
+        elif item[6:-16] == '04' and int(item[18:-4]) % 2 == 1:
+            feeling_list.append('male_sad')
+        elif item[6:-16] == '05' and int(item[18:-4]) % 2 == 0:
+            feeling_list.append('female_angry')
+        elif item[6:-16] == '05' and int(item[18:-4]) % 2 == 1:
+            feeling_list.append('male_angry')
+        elif item[6:-16] == '06' and int(item[18:-4]) % 2 == 0:
+            feeling_list.append('female_fearful')
+        elif item[6:-16] == '06' and int(item[18:-4]) % 2 == 1:
+            feeling_list.append('male_fearful')
         elif item[:1] == 'a':
-            feeling_list.append('angry')
+            feeling_list.append('male_angry')
         elif item[:1] == 'f':
-            feeling_list.append('fearful')
-        elif item[:1] == 'n':
-            feeling_list.append('calm')
+            feeling_list.append('male_fearful')
         elif item[:1] == 'h':
-            feeling_list.append('happy')
+            feeling_list.append('male_happy')
         elif item[:2] == 'sa':
-            feeling_list.append('sad')
+            feeling_list.append('male_sad')
 
     labels = pd.DataFrame(feeling_list)
 
@@ -42,7 +50,7 @@ if __name__ == "__main__":
 
     for index, y in enumerate(files):
         file = files[index].split('/')[-1]
-        if file[6:-16] != '01' and file[6:-16] != '07' and file[6:-16] != '08' and file[:2] != 'su' and file[:1] != 'd':
+        if file[6:-16] != '01' and file[6:-16] != '07' and file[6:-16] != '08' and file[:2] != 'su' and file[:1] != 'n' and file[:1] != 'd':
             X, sample_rate = librosa.load(
                 y, res_type='kaiser_fast', duration=2.5, sr=22050*2, offset=0.5)
             sample_rate = np.array(sample_rate)
@@ -98,7 +106,7 @@ if __name__ == "__main__":
         tf.keras.layers.Conv1D(128, 5, padding='same',),
         tf.keras.layers.Activation('relu'),
         tf.keras.layers.Flatten(),
-        tf.keras.layers.Dense(5),
+        tf.keras.layers.Dense(10),
         tf.keras.layers.Activation('softmax', name='output'),
     ])
 
@@ -107,14 +115,13 @@ if __name__ == "__main__":
     model.compile(loss='categorical_crossentropy',
                   optimizer=opt, metrics=['accuracy'])
 
-    # Early stopping
+    # Early stopping callback
     es = tf.keras.callbacks.EarlyStopping(monitor='val_loss',
                                           min_delta=0,
                                           patience=5,
                                           verbose=1, mode='auto')
-
     history = model.fit(x_traincnn, y_train, batch_size=16,
-                        epochs=700, validation_data=(x_testcnn, y_test), callbacks=[es])
+                        epochs=10, validation_data=(x_testcnn, y_test), callbacks=[es])
 
     # Save Keras model
     model.save('model.h5')
