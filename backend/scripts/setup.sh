@@ -8,6 +8,4 @@ sudo apt update && sudo apt install -y yarn
 
 apt install -y default-jdk python3-pip python3-venv yarn
 
-python3 -m venv venv
-
 pip3 install flask librosa numpy pandas libsndfile1-dev

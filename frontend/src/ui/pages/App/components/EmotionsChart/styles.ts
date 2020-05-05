@@ -8,6 +8,7 @@ const useStyles = makeStyles((theme: Theme) =>
       justifyContent: 'center',
       display: 'flex',
       marginTop: '50px',
+      marginBottom: '20vmin',
     },
   })
 );
