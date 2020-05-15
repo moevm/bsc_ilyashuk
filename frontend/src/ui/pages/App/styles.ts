@@ -15,6 +15,11 @@ const useStyles = makeStyles((theme: Theme) =>
       justifyContent: 'center',
       color: 'white',
     },
+    githubButton: {
+      position: 'absolute',
+      right: '10px',
+      top: '10px',
+    },
   })
 );
 

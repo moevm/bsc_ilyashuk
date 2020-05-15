@@ -1,5 +1,7 @@
+import { IconButton } from '@material-ui/core';
 import { inject, observer } from 'mobx-react';
 import React, { FunctionComponent } from 'react';
+import github from './assets/github.png';
 import AudioRecorder from './components/AudioRecorder/AudioRecorder';
 import EmotionsChart from './components/EmotionsChart/EmotionsChart';
 import FileUploader from './components/FilePicker/FilePicker';
@@ -22,6 +24,12 @@ const App: FunctionComponent<PrivateProps> = (props: PrivateProps) => {
         <FileUploader />
         <ProgressBar />
         <EmotionsChart />
+        <IconButton
+          className={classes.githubButton}
+          onClick={props.controller.openGithub}
+        >
+          <img src={github} width={40} />
+        </IconButton>
       </header>
     </div>
   );

@@ -51,4 +51,8 @@ export default class MainController {
   private onUploadProgress = (event: ProgressEvent) => {
     this.uploadProgress = (event.loaded / event.total) * 100;
   };
+
+  public openGithub = () => {
+    window.open('https://github.com/moevm/bsc_ilyashuk', '_blank');
+  };
 }
