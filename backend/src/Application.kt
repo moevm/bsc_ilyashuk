@@ -1,18 +1,21 @@
 package org.moevm.bsc_ilyashuk
 
-import io.ktor.application.*
-import io.ktor.client.HttpClient
-import io.ktor.client.features.json.JsonFeature
-import io.ktor.client.request.get
-import io.ktor.response.*
-import io.ktor.routing.*
-import io.ktor.http.*
-import io.ktor.gson.*
-import io.ktor.features.*
-import org.moevm.bsc_ilyashuk.models.Features
+import io.ktor.application.Application
+import io.ktor.application.call
+import io.ktor.application.install
+import io.ktor.features.CORS
+import io.ktor.features.ContentNegotiation
+import io.ktor.gson.gson
+import io.ktor.http.ContentType
+import io.ktor.response.respond
+import io.ktor.response.respondText
+import io.ktor.routing.get
+import io.ktor.routing.post
+import io.ktor.routing.routing
 import org.tensorflow.SavedModelBundle
 import org.tensorflow.Tensor
 import java.nio.FloatBuffer
+
 
 fun main(args: Array<String>): Unit = io.ktor.server.netty.EngineMain.main(args)
 
@@ -35,11 +38,7 @@ fun Application.module(testing: Boolean = false) {
         post("/predict") {
             val file = call.getFile()
 
-            val client = HttpClient {
-                install(JsonFeature)
-            }
-
-            val features = client.get<Features>("http://localhost:5000?filename=${file.name}")
+            val features = getFeaturesFromFile(file.name)
 
             val predictions = ArrayList<FloatArray>()
 

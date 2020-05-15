@@ -41,8 +41,9 @@ dependencies {
     implementation "io.ktor:ktor-client-json-jvm:$ktor_version"
     implementation "io.ktor:ktor-client-gson:$ktor_version"
     implementation "io.ktor:ktor-client-apache:$ktor_version"
-
     implementation 'org.tensorflow:tensorflow:1.13.1'
+
+    implementation 'com.fasterxml.jackson.module:jackson-module-kotlin:2.8.+'
 
     testImplementation "io.ktor:ktor-server-tests:$ktor_version"
 }

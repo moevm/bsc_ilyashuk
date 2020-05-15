@@ -1,5 +1,7 @@
 package org.moevm.bsc_ilyashuk
 
+import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
+import com.fasterxml.jackson.module.kotlin.readValue
 import io.ktor.application.ApplicationCall
 import io.ktor.http.content.PartData
 import io.ktor.http.content.forEachPart
@@ -9,9 +11,8 @@ import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import kotlinx.coroutines.yield
-import java.io.File
-import java.io.InputStream
-import java.io.OutputStream
+import org.moevm.bsc_ilyashuk.models.Features
+import java.io.*
 
 suspend fun InputStream.copyToSuspend(
     out: OutputStream,
@@ -55,4 +56,12 @@ suspend fun ApplicationCall.getFile() : File {
         part.dispose()
     }
     return file!!
+}
+
+fun getFeaturesFromFile(filename: String) : Features{
+    val p = Runtime.getRuntime().exec("python3 extract_features.py $filename")
+    val reader = BufferedReader(InputStreamReader(p.inputStream))
+    val json = reader.readLine()
+    val mapper = jacksonObjectMapper()
+    return mapper.readValue(json)
 }
