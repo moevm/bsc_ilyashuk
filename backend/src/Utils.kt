@@ -39,6 +39,11 @@ suspend fun InputStream.copyToSuspend(
 }
 
 suspend fun ApplicationCall.getFile() : File {
+    val dir = File("./uploads/")
+    if (!dir.exists()) {
+        dir.mkdir()
+    }
+
     val multipart = receiveMultipart()
     var file: File? = null
     multipart.forEachPart { part ->
