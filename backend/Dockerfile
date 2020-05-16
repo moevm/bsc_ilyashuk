@@ -1,16 +1,16 @@
-FROM openjdk:8-jre-alpine
-
-ENV APPLICATION_USER ktor
-RUN adduser -D -g '' $APPLICATION_USER
-
-#RUN apk add --update libc6-compat
+FROM ubuntu:18.04
 
 RUN mkdir /app
-RUN chown -R $APPLICATION_USER /app
-
-USER $APPLICATION_USER
-
-COPY ./build/libs/bsc_backend.jar /app/bsc_backend.jar
 WORKDIR /app
 
-CMD ["java", "-server", "-XX:+UnlockExperimentalVMOptions", "-XX:+UseCGroupMemoryLimitForHeap", "-XX:InitialRAMFraction=2", "-XX:MinRAMFraction=2", "-XX:MaxRAMFraction=2", "-XX:+UseG1GC", "-XX:MaxGCPauseMillis=100", "-XX:+UseStringDeduplication", "-jar", "bsc_backend.jar"]
+COPY ./requirements.txt /app/requirements.txt
+COPY ./build/libs/bsc_backend.jar /app/bsc_backend.jar
+COPY ./saved_model /app/saved_model
+
+RUN apt-get update && \
+    apt-get install -y default-jdk python3-pip python3-dev && \
+    apt-get clean
+
+RUN pip3 install -r requirements.txt
+
+CMD ["java", "-jar", "bsc_backend.jar"]
