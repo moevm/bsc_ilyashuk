@@ -9,7 +9,7 @@ COPY ./saved_model /app/saved_model
 COPY ./extract_features.py /app/extract_features.py
 
 RUN apt-get update && \
-    apt-get install -y default-jdk python3-pip python3-dev libsndfile1-dev && \
+    apt-get install -y default-jdk python3-pip python3-dev libsndfile1-dev ffmpeg && \
     apt-get clean
 
 RUN pip3 install -r requirements.txt
