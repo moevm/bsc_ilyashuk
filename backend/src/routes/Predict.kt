@@ -47,6 +47,7 @@ fun Route.predict(model: SavedModelBundle) {
 
         } catch (e: Exception) {
             call.respond(HttpStatusCode.InternalServerError, "Error")
+            throw(e);
         } finally {
             file.delete()
         }

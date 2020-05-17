@@ -6,11 +6,12 @@ WORKDIR /app
 COPY ./requirements.txt /app/requirements.txt
 COPY ./build/libs/bsc_backend.jar /app/bsc_backend.jar
 COPY ./saved_model /app/saved_model
+COPY ./extract_features.py /app/extract_features.py
 
 RUN apt-get update && \
-    apt-get install -y default-jdk python3-pip python3-dev && \
+    apt-get install -y default-jdk python3-pip python3-dev libsndfile1-dev && \
     apt-get clean
 
 RUN pip3 install -r requirements.txt
 
-CMD ["java", "-jar", "bsc_backend.jar"]
+CMD ["java", "-XX:+UseContainerSupport", "-jar",  "bsc_backend.jar"]

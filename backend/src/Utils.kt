@@ -63,7 +63,7 @@ suspend fun ApplicationCall.getFile() : File {
     return file!!
 }
 
-fun getFeaturesFromFile(filename: String) : Features{
+fun getFeaturesFromFile(filename: String) : Features {
     val p = Runtime.getRuntime().exec("python3 extract_features.py $filename")
     val reader = BufferedReader(InputStreamReader(p.inputStream))
     val json = reader.readLine()
