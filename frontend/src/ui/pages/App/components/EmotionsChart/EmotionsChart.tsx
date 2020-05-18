@@ -3,6 +3,7 @@ import React, { FunctionComponent } from 'react';
 import {
   Brush,
   CartesianGrid,
+  Label,
   Legend,
   Line,
   LineChart,
@@ -61,13 +62,30 @@ const EmotionsChart: FunctionComponent<PrivateProps> = (
               />
             )}
 
-            <CartesianGrid strokeDasharray='3 3' />
+            <CartesianGrid strokeDasharray='1 1' />
 
             <Legend />
             <Brush dataKey='time' height={30} stroke={primaryColor} />
             <Tooltip />
-            <XAxis dataKey='time' />
-            <YAxis />
+            <XAxis dataKey='time' height={50}>
+              <Label
+                value='Время, с.'
+                position='insideBottom'
+                style={{ fill: 'grey' }}
+              />
+            </XAxis>
+            <YAxis>
+              <Label
+                color='#FFFFFF'
+                value='Вероятность'
+                position='insideLeft'
+                angle={-90}
+                style={{
+                  textAnchor: 'middle',
+                  fill: 'grey',
+                }}
+              />
+            </YAxis>
           </LineChart>
         </>
       ) : null}
