@@ -2,9 +2,11 @@ import { action, observable } from 'mobx';
 import { ReactMicStopEvent } from 'react-mic';
 import PredictionService from '../../../services/prediction';
 import EmotionsChartController from './components/EmotionsChart/controller';
+import MetricsController from './components/Metrics/controller';
 
 export default class MainController {
   public readonly chart = new EmotionsChartController();
+  public readonly metrics = new MetricsController();
 
   private file?: File;
 
@@ -39,11 +41,11 @@ export default class MainController {
 
   private predict = async (file: File) => {
     this.isPredicted = false;
-    const prediction = await PredictionService.predict(
-      file,
-      this.onUploadProgress
-    );
-    this.chart.formChartData(prediction);
+    const result = await PredictionService.predict(file, this.onUploadProgress);
+    this.chart.formData(result.predictions);
+
+    this.metrics.formData(result.metrics);
+
     this.isPredicted = true;
   };
 

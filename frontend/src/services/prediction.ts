@@ -1,12 +1,13 @@
 import axios from 'axios';
 
 export type TimePrediction = { time: number; pred: number[] };
+export type Metrics = { totalVolume: number; volumes: number[] };
 
 export default class PredictionService {
   public static predict = async (
     file: File,
     onProgress: (progress: ProgressEvent) => void
-  ): Promise<TimePrediction[]> => {
+  ): Promise<{ predictions: TimePrediction[]; metrics: Metrics }> => {
     const formData = new FormData();
     formData.append('file', file);
 
@@ -20,6 +21,6 @@ export default class PredictionService {
     };
 
     const response = await axios.post(url, formData, config);
-    return response.data.predictions;
+    return response.data;
   };
 }

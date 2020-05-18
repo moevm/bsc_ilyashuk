@@ -4,6 +4,7 @@ import AudioRecorder from './components/AudioRecorder/AudioRecorder';
 import EmotionsChart from './components/EmotionsChart/EmotionsChart';
 import FileUploader from './components/FilePicker/FilePicker';
 import GithubButton from './components/GithubButton/GithubButton';
+import Metrics from './components/Metrics/Metrics';
 import ProgressBar from './components/ProgressBar/ProgressBar';
 import MainController from './controller';
 import useStyles from './styles';
@@ -24,6 +25,7 @@ const App: FunctionComponent<PrivateProps> = (props: PrivateProps) => {
         <ProgressBar />
         <EmotionsChart />
         <GithubButton />
+        <Metrics />
       </header>
     </div>
   );

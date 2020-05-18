@@ -15,7 +15,7 @@ export default class EmotionsChartController {
   };
 
   @action.bound
-  public formChartData = (predictions: TimePrediction[]) => {
+  public formData = (predictions: TimePrediction[]) => {
     const res: any[] = [];
     predictions.forEach((prediction: TimePrediction) => {
       var chartData: any = {};
