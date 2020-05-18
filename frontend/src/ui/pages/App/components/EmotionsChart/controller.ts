@@ -1,5 +1,6 @@
 import { action, observable } from 'mobx';
 import { labels } from '../../../../../config/labels';
+import { TimePrediction } from '../../../../../services/prediction';
 
 export default class EmotionsChartController {
   @observable
@@ -14,13 +15,13 @@ export default class EmotionsChartController {
   };
 
   @action.bound
-  public formChartData = (predictions: number[][]) => {
+  public formChartData = (predictions: TimePrediction[]) => {
     const res: any[] = [];
-    predictions.forEach((prediction: number[], index: number) => {
+    predictions.forEach((prediction: TimePrediction) => {
       var chartData: any = {};
-      chartData.time = index * 2.5;
+      chartData.time = prediction.time;
       labels.forEach((label, labelIndex) => {
-        chartData[label] = prediction[labelIndex];
+        chartData[label] = prediction.pred[labelIndex];
       });
       res.push(chartData);
     });

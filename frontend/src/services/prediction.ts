@@ -1,14 +1,16 @@
 import axios from 'axios';
 
+export type TimePrediction = { time: number; pred: number[] };
+
 export default class PredictionService {
   public static predict = async (
     file: File,
     onProgress: (progress: ProgressEvent) => void
-  ): Promise<number[][]> => {
+  ): Promise<TimePrediction[]> => {
     const formData = new FormData();
     formData.append('file', file);
 
-    const url = 'https://bsc-ilyashuk.herokuapp.com/predict';
+    const url = 'http://0.0.0.0:8080/predict';
 
     const config = {
       headers: {
@@ -18,6 +20,6 @@ export default class PredictionService {
     };
 
     const response = await axios.post(url, formData, config);
-    return (response.data as unknown) as number[][];
+    return response.data;
   };
 }

@@ -43,7 +43,9 @@ fun Route.predict(model: SavedModelBundle) {
                     predictions.add(temp)
                 }
             }
-            call.respond(predictions)
+
+            val predictionsWithTime = predictions.mapIndexed { index, pred -> mapOf("time" to index * 2.5, "pred" to pred) }
+            call.respond(predictionsWithTime)
 
         } catch (e: Exception) {
             call.respond(HttpStatusCode.InternalServerError, "Error")
