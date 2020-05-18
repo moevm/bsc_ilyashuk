@@ -27,7 +27,7 @@ const FilePicker: FunctionComponent<PrivateProps> = (props: PrivateProps) => {
         color='primary'
         className={classes.uploadButton}
       >
-        Обработать файл
+        Обработать
       </Button>
     </div>
   );
