@@ -20,6 +20,6 @@ export default class PredictionService {
     };
 
     const response = await axios.post(url, formData, config);
-    return response.data;
+    return response.data.predictions;
   };
 }

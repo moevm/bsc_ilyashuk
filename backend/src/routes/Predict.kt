@@ -6,6 +6,8 @@ import io.ktor.locations.*
 import io.ktor.response.*
 import io.ktor.routing.Route
 import org.moevm.bsc_ilyashuk.Predict
+import org.moevm.bsc_ilyashuk.config.fragmentLength
+import org.moevm.bsc_ilyashuk.utils.calculateVolume
 import org.moevm.bsc_ilyashuk.utils.getFeaturesFromFile
 import org.moevm.bsc_ilyashuk.utils.getFile
 import org.tensorflow.SavedModelBundle
@@ -44,9 +46,26 @@ fun Route.predict(model: SavedModelBundle) {
                 }
             }
 
+            val volume = calculateVolume(predictions)
 
-            val predictionsWithTime = predictions.mapIndexed { index, pred -> mapOf("time" to index * 2.5, "pred" to pred) }
-            call.respond(predictionsWithTime)
+            val predictionsWithTime =
+                predictions.mapIndexed { index, pred ->
+                    mapOf(
+                        "time" to index * fragmentLength,
+                        "pred" to pred
+                    )
+                }
+
+
+            call.respond(
+                mapOf(
+                    "predictions" to predictionsWithTime,
+                    "metrics" to mapOf(
+                        "totalVolume" to volume.first,
+                        "volumes" to volume.second
+                    )
+                )
+            )
 
         } catch (e: Exception) {
             call.respond(HttpStatusCode.InternalServerError, "Error")
