@@ -21,7 +21,7 @@ export default class EmotionsChartController {
       var chartData: any = {};
       chartData.time = prediction.time;
       labels.forEach((label, labelIndex) => {
-        chartData[label] = prediction.pred[labelIndex];
+        chartData[label] = prediction.pred[labelIndex].toFixed(3);
       });
       res.push(chartData);
     });
