@@ -27,14 +27,8 @@ const FilePicker: FunctionComponent<PrivateProps> = (props: PrivateProps) => {
         color='primary'
         className={classes.uploadButton}
       >
-        Upload
+        Обработать файл
       </Button>
-
-      {/* <LinearProgress
-        variant='determinate'
-        value={props.controller.uploadProgress}
-        className={classes.progressBar}
-      /> */}
     </div>
   );
 };

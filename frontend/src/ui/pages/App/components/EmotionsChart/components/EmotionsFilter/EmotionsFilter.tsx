@@ -19,13 +19,13 @@ const EmotionsFilter: FunctionComponent<PrivateProps> = (
   return (
     <div className={classes.container}>
       <FormControl variant='filled' className={classes.formControl}>
-        <InputLabel className={classes.whiteText}>Filter</InputLabel>
+        <InputLabel className={classes.whiteText}>Фильтр</InputLabel>
         <Select
           value={props.controller.chart.selectedFilterIndex}
           onChange={props.controller.chart.onFilterSelected}
           className={classes.whiteText}
         >
-          <MenuItem value={-1}>All</MenuItem>
+          <MenuItem value={-1}>Все</MenuItem>
           {labels.map((label, index) => (
             <MenuItem key={index} value={index}>
               {label}

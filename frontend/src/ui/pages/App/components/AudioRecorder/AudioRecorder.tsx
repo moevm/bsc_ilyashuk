@@ -32,7 +32,7 @@ const AudioRecorder: FunctionComponent<PrivateProps> = (
           color={props.controller.isRecording ? 'secondary' : 'primary'}
           onClick={props.controller.changeRecordingState}
         >
-          {props.controller.isRecording ? 'Stop recording' : 'Start recording'}
+          {props.controller.isRecording ? 'Остановить' : 'Начать запись'}
         </Button>
       </div>
     </div>
