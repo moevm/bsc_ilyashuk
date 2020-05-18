@@ -6,8 +6,8 @@ import io.ktor.locations.*
 import io.ktor.response.*
 import io.ktor.routing.Route
 import org.moevm.bsc_ilyashuk.Predict
-import org.moevm.bsc_ilyashuk.getFeaturesFromFile
-import org.moevm.bsc_ilyashuk.getFile
+import org.moevm.bsc_ilyashuk.utils.getFeaturesFromFile
+import org.moevm.bsc_ilyashuk.utils.getFile
 import org.tensorflow.SavedModelBundle
 import org.tensorflow.Tensor
 import java.nio.FloatBuffer
@@ -44,12 +44,13 @@ fun Route.predict(model: SavedModelBundle) {
                 }
             }
 
+
             val predictionsWithTime = predictions.mapIndexed { index, pred -> mapOf("time" to index * 2.5, "pred" to pred) }
             call.respond(predictionsWithTime)
 
         } catch (e: Exception) {
             call.respond(HttpStatusCode.InternalServerError, "Error")
-            throw(e);
+            throw(e)
         } finally {
             file.delete()
         }
