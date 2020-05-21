@@ -1,14 +1,19 @@
 package org.moevm.bsc_ilyashuk.utils
 
+import org.moevm.bsc_ilyashuk.config.fragmentLength
+import org.moevm.bsc_ilyashuk.config.numOfEmotions
+
 fun calculateVolume(predictions: ArrayList<FloatArray>): Pair<Float, Array<Float>> {
-    var totalVolume = 0f
-    val volumes = Array(5) { 0f }
+    val volumes = Array(numOfEmotions) { 0f }
 
     predictions.forEach { prediction ->
         prediction.forEachIndexed { index, emotionProbability ->
-            totalVolume += emotionProbability
-            volumes[index] += emotionProbability
+            volumes[index] += fragmentLength * emotionProbability
         }
+    }
+
+    val totalVolume = volumes.reduce { acc, volume ->
+        acc.plus(volume)
     }
     return Pair(totalVolume, volumes)
 }

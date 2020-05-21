@@ -3,10 +3,10 @@ import os
 import joblib
 import matplotlib.pyplot as plt
 import numpy as np
-from keras.layers import Activation, Conv1D, Dense, Dropout, Flatten
-from keras.models import Sequential
+import tensorflow as tf
 from sklearn.metrics import classification_report, confusion_matrix
 from sklearn.model_selection import train_test_split
+from tensorflow import keras
 
 from config import MODEL_DIR_PATH, SAVE_DIR_PATH
 
@@ -23,14 +23,15 @@ class TrainModel:
 
         print(x_traincnn.shape, x_testcnn.shape)
 
-        model = Sequential()
-        model.add(Conv1D(64, 5, padding='same',
-                         input_shape=(40, 1)))
-        model.add(Activation('relu'))
-        model.add(Dropout(0.2))
-        model.add(Flatten())
-        model.add(Dense(8))
-        model.add(Activation('softmax'))
+        model = tf.keras.Sequential([
+            tf.keras.layers.Conv1D(64, 5, padding='same',
+                                   input_shape=(40, 1), name='input'),
+            tf.keras.layers.Activation('relu'),
+            tf.keras.layers.Dropout(0.2),
+            tf.keras.layers.Flatten(),
+            tf.keras.layers.Dense(8),
+            tf.keras.layers.Activation('softmax', name='output')
+        ])
 
         print(model.summary)
 
@@ -42,24 +43,24 @@ class TrainModel:
                                 batch_size=16, epochs=50,
                                 validation_data=(x_testcnn, y_test))
 
-        # Loss plotting
-        plt.plot(cnn_history.history['loss'])
-        plt.plot(cnn_history.history['val_loss'])
-        plt.title('model loss')
-        plt.ylabel('loss')
-        plt.xlabel('epoch')
-        plt.legend(['train', 'test'], loc='upper left')
-        plt.savefig('loss.png')
-        plt.close()
+        # # Loss plotting
+        # plt.plot(cnn_history.history['loss'])
+        # plt.plot(cnn_history.history['val_loss'])
+        # plt.title('model loss')
+        # plt.ylabel('loss')
+        # plt.xlabel('epoch')
+        # plt.legend(['train', 'test'], loc='upper left')
+        # plt.savefig('loss.png')
+        # plt.close()
 
-        # Accuracy plotting
-        plt.plot(cnn_history.history['accuracy'])
-        plt.plot(cnn_history.history['val_accuracy'])
-        plt.title('model accuracy')
-        plt.ylabel('acc')
-        plt.xlabel('epoch')
-        plt.legend(['train', 'test'], loc='upper left')
-        plt.savefig('accuracy.png')
+        # # Accuracy plotting
+        # plt.plot(cnn_history.history['accuracy'])
+        # plt.plot(cnn_history.history['val_accuracy'])
+        # plt.title('model accuracy')
+        # plt.ylabel('acc')
+        # plt.xlabel('epoch')
+        # plt.legend(['train', 'test'], loc='upper left')
+        # plt.savefig('accuracy.png')
 
         predictions = model.predict_classes(x_testcnn)
         new_y_test = y_test.astype(int)
@@ -70,16 +71,25 @@ class TrainModel:
 
         model_name = 'model.h5'
 
-        # Save model and weights
+        # Save Keras model
         if not os.path.isdir(MODEL_DIR_PATH):
             os.makedirs(MODEL_DIR_PATH)
         model_path = os.path.join(MODEL_DIR_PATH, model_name)
         model.save(model_path)
-        print('Saved trained model at %s ' % model_path)
+
+        print(model.input)
+        print(model.output)
+
+        # Save in SavedModel format
+        with tf.keras.backend.get_session() as sess:
+            tf.saved_model.simple_save(
+                sess,
+                'saved_model',
+                inputs={'input': model.input},
+                outputs={'output': model.output})
 
 
 if __name__ == '__main__':
-    print('Training started')
     X = joblib.load(SAVE_DIR_PATH + '/X.joblib')
     y = joblib.load(SAVE_DIR_PATH + '/y.joblib')
     NEURAL_NET = TrainModel.train_neural_network(X=X, y=y)

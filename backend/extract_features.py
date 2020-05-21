@@ -9,11 +9,17 @@ filename = './uploads/' + sys.argv[1]
 
 sr = librosa.core.get_samplerate(filename)
 
+duration = librosa.core.get_duration(filename=filename, sr=sr)
+
 data, sr = librosa.load(filename, res_type='kaiser_fast', sr=sr)
 sr = np.array(sr)
-mfccs = np.mean(librosa.feature.mfcc(y=data,
-                                     sr=sr,
-                                     n_mfcc=13),
-                axis=0)
 
-print(json.dumps({"data": mfccs.tolist()}))
+raw_mfccs = librosa.feature.mfcc(y=data,
+                                 sr=sr,
+                                 n_mfcc=40).T
+
+mfcc_chunks = np.array_split(raw_mfccs, duration / 3)
+
+mean = [np.mean(chunk, axis=0).tolist() for chunk in mfcc_chunks]
+
+print(json.dumps({"data": mean}))

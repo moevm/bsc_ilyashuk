@@ -7,6 +7,7 @@ import io.ktor.response.*
 import io.ktor.routing.Route
 import org.moevm.bsc_ilyashuk.Predict
 import org.moevm.bsc_ilyashuk.config.fragmentLength
+import org.moevm.bsc_ilyashuk.config.numOfEmotions
 import org.moevm.bsc_ilyashuk.utils.calculateVolume
 import org.moevm.bsc_ilyashuk.utils.getFeaturesFromFile
 import org.moevm.bsc_ilyashuk.utils.getFile
@@ -22,13 +23,13 @@ fun Route.predict(model: SavedModelBundle) {
 
             val predictions = ArrayList<FloatArray>()
 
-            for (i in 0 until features.data.size / 216) {
+            for (chunk in features.data) {
                 val session = model.session()
                 val runner = session.runner()
 
                 val input = Tensor.create(
-                    arrayOf<Long>(1, 216, 1).toLongArray(),
-                    FloatBuffer.wrap(features.data.slice((i * 216) until ((i + 1) * 216)).toFloatArray())
+                    arrayOf<Long>(1, 40, 1).toLongArray(),
+                    FloatBuffer.wrap(chunk.toFloatArray())
                 )
 
                 runner.apply {
@@ -36,11 +37,11 @@ fun Route.predict(model: SavedModelBundle) {
                     fetch("output/Softmax")
                 }
                 val outputTensor = runner.run()[0]
-                FloatBuffer.allocate(10).apply {
+                FloatBuffer.allocate(numOfEmotions).apply {
                     outputTensor.writeTo(this)
-                    val temp = FloatArray(5) { 0f }
+                    val temp = FloatArray(numOfEmotions) { 0f }
                     array().forEachIndexed { index, value ->
-                        temp[index % 5] += value
+                        temp[index] = value
                     }
                     predictions.add(temp)
                 }
@@ -55,7 +56,6 @@ fun Route.predict(model: SavedModelBundle) {
                         "pred" to pred
                     )
                 }
-
 
             call.respond(
                 mapOf(
