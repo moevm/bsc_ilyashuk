@@ -115,11 +115,14 @@ if __name__ == "__main__":
     model.compile(loss='categorical_crossentropy',
                   optimizer=opt, metrics=['accuracy'])
 
+    print(model.summary())
+
     # Early stopping callback
     es = tf.keras.callbacks.EarlyStopping(monitor='val_loss',
                                           min_delta=0,
                                           patience=5,
                                           verbose=1, mode='auto')
+
     history = model.fit(x_traincnn, y_train, batch_size=16,
                         epochs=10, validation_data=(x_testcnn, y_test), callbacks=[es])
 

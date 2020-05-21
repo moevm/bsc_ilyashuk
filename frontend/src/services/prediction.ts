@@ -11,7 +11,7 @@ export default class PredictionService {
     const formData = new FormData();
     formData.append('file', file);
 
-    const url = 'http://0.0.0.0:8080/predict';
+    const url = 'https://bsc-ilyashuk.herokuapp.com/predict';
 
     const config = {
       headers: {

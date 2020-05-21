@@ -40,7 +40,7 @@ const Metrics: FunctionComponent<PrivateProps> = (props: PrivateProps) => {
         <TableBody>
           <TableRow className={classes.row}>
             <TableCell component='th' scope='row' className={classes.cell}>
-              Метрика
+              Объем
             </TableCell>
             {controller.metrics.volumes.map((volume, index) => (
               <TableCell key={index} align='right' className={classes.cell}>
