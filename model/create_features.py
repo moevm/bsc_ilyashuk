@@ -8,66 +8,49 @@ import numpy as np
 from config import SAVE_DIR_PATH, TRAINING_FILES_PATH
 
 
-class CreateFeatures:
+def create_features(path, save_dir):
+    lst = []
 
-    @staticmethod
-    def features_creator(path, save_dir) -> str:
-        """
-        This function creates the dataset and saves both data and labels in
-        two files, X.joblib and y.joblib in the joblib_features folder.
-        With this method, you can persist your features and train quickly
-        new machine learning models instead of reloading the features
-        every time with this pipeline.
-        """
+    start_time = time.time()
 
-        lst = []
+    for subdir, dirs, files in os.walk(path):
 
-        start_time = time.time()
+        for file in files:
+            print(file)
+            if(file[0] == '.'):
+                continue
+            try:
 
-        for subdir, dirs, files in os.walk(path):
+                X, sample_rate = librosa.load(os.path.join(subdir, file),
+                                              res_type='kaiser_fast')
 
-            for file in files:
-                print(file)
-                if(file[0] == '.'):
-                    continue
-                try:
+                mfccs = np.mean(librosa.feature.mfcc(y=X, sr=sample_rate,
+                                                     n_mfcc=40).T, axis=0)
 
-                    X, sample_rate = librosa.load(os.path.join(subdir, file),
-                                                  res_type='kaiser_fast')
+                # Перевод лейблов из 1-8 в 0-7
+                file = int(file[7:8]) - 1
+                arr = mfccs, file
+                lst.append(arr)
+            except Exception as err:
+                print(err)
+                continue
 
-                    mfccs = np.mean(librosa.feature.mfcc(y=X, sr=sample_rate,
-                                                         n_mfcc=40).T, axis=0)
+    print("Data loaded. Loading time: %s seconds" %
+          (time.time() - start_time))
 
-                    # The instruction below converts the labels (from 1 to 8) to a series from 0 to 7
-                    # This is because our predictor needs to start from 0 otherwise it will try to predict also 0.
-                    file = int(file[7:8]) - 1
-                    arr = mfccs, file
-                    lst.append(arr)
-                except Exception as err:
-                    print(err)
-                    continue
+    # Creating X and y: zip makes a list of all the first elements, and a list of all the second elements.
+    X, y = zip(*lst)
 
-        print("--- Data loaded. Loading time: %s seconds ---" %
-              (time.time() - start_time))
+    # Array conversion
+    X, y = np.asarray(X), np.asarray(y)
 
-        # Creating X and y: zip makes a list of all the first elements, and a list of all the second elements.
-        X, y = zip(*lst)
+    print(X.shape, y.shape)
+    X_name, y_name = 'X.joblib', 'y.joblib'
 
-        # Array conversion
-        X, y = np.asarray(X), np.asarray(y)
-
-        # Array shape check
-        print(X.shape, y.shape)
-
-        # Preparing features dump
-        X_name, y_name = 'X.joblib', 'y.joblib'
-
-        joblib.dump(X, os.path.join(save_dir, X_name))
-        joblib.dump(y, os.path.join(save_dir, y_name))
-
-        return "Completed"
+    joblib.dump(X, os.path.join(save_dir, X_name))
+    joblib.dump(y, os.path.join(save_dir, y_name))
 
 
 if __name__ == '__main__':
-    FEATURES = CreateFeatures.features_creator(
-        path=TRAINING_FILES_PATH, save_dir=SAVE_DIR_PATH)
+    create_features(path=TRAINING_FILES_PATH, save_dir=SAVE_DIR_PATH)
+    print('Completed')

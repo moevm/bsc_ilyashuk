@@ -13,85 +13,82 @@ from sklearn.model_selection import train_test_split
 from config import MODEL_DIR_PATH, SAVE_DIR_PATH
 
 
-class TrainModel:
+def train_neural_network(X, y):
+    X_train, X_test, y_train, y_test = train_test_split(
+        X, y, test_size=0.33, random_state=42)
 
-    @staticmethod
-    def train_neural_network(X, y):
-        X_train, X_test, y_train, y_test = train_test_split(
-            X, y, test_size=0.33, random_state=42)
+    x_traincnn = np.expand_dims(X_train, axis=2)
+    x_testcnn = np.expand_dims(X_test, axis=2)
 
-        x_traincnn = np.expand_dims(X_train, axis=2)
-        x_testcnn = np.expand_dims(X_test, axis=2)
+    print(x_traincnn.shape, x_testcnn.shape)
 
-        print(x_traincnn.shape, x_testcnn.shape)
+    model = keras.Sequential([
+        keras.layers.Conv1D(64, 5, padding='same',
+                            input_shape=(40, 1), name='input'),
+        keras.layers.Activation('relu'),
+        keras.layers.Dropout(0.2),
+        keras.layers.Flatten(),
+        keras.layers.Dense(8),
+        keras.layers.Activation('softmax', name='output')
+    ])
 
-        model = keras.Sequential([
-            keras.layers.Conv1D(64, 5, padding='same',
-                                input_shape=(40, 1), name='input'),
-            keras.layers.Activation('relu'),
-            keras.layers.Dropout(0.2),
-            keras.layers.Flatten(),
-            keras.layers.Dense(8),
-            keras.layers.Activation('softmax', name='output')
-        ])
+    print(model.summary)
 
-        print(model.summary)
+    model.compile(loss='sparse_categorical_crossentropy',
+                  optimizer='rmsprop',
+                  metrics=['accuracy'])
 
-        model.compile(loss='sparse_categorical_crossentropy',
-                      optimizer='rmsprop',
-                      metrics=['accuracy'])
+    cnn_history = model.fit(x_traincnn, y_train,
+                            batch_size=16, epochs=50,
+                            validation_data=(x_testcnn, y_test))
 
-        cnn_history = model.fit(x_traincnn, y_train,
-                                batch_size=16, epochs=50,
-                                validation_data=(x_testcnn, y_test))
+    # Loss plotting
+    plt.plot(cnn_history.history['loss'])
+    plt.plot(cnn_history.history['val_loss'])
+    plt.title('model loss')
+    plt.ylabel('loss')
+    plt.xlabel('epoch')
+    plt.legend(['train', 'test'], loc='upper left')
+    plt.savefig('plots/loss.png')
+    plt.close()
 
-        # Loss plotting
-        plt.plot(cnn_history.history['loss'])
-        plt.plot(cnn_history.history['val_loss'])
-        plt.title('model loss')
-        plt.ylabel('loss')
-        plt.xlabel('epoch')
-        plt.legend(['train', 'test'], loc='upper left')
-        plt.savefig('plots/loss.png')
-        plt.close()
+    # Accuracy plotting
+    plt.plot(cnn_history.history['accuracy'])
+    plt.plot(cnn_history.history['val_accuracy'])
+    plt.title('model accuracy')
+    plt.ylabel('acc')
+    plt.xlabel('epoch')
+    plt.legend(['train', 'test'], loc='upper left')
+    plt.savefig('plots/accuracy.png')
 
-        # Accuracy plotting
-        plt.plot(cnn_history.history['accuracy'])
-        plt.plot(cnn_history.history['val_accuracy'])
-        plt.title('model accuracy')
-        plt.ylabel('acc')
-        plt.xlabel('epoch')
-        plt.legend(['train', 'test'], loc='upper left')
-        plt.savefig('plots/accuracy.png')
+    predictions = model.predict_classes(x_testcnn)
+    new_y_test = y_test.astype(int)
+    matrix = confusion_matrix(new_y_test, predictions)
 
-        predictions = model.predict_classes(x_testcnn)
-        new_y_test = y_test.astype(int)
-        matrix = confusion_matrix(new_y_test, predictions)
+    print(classification_report(new_y_test, predictions))
+    print(matrix)
 
-        print(classification_report(new_y_test, predictions))
-        print(matrix)
+    # Remove model save folder if exists
+    dirpath = Path('model')
+    if dirpath.exists() and dirpath.is_dir():
+        shutil.rmtree(dirpath)
 
-        # Remove model save folder if exists
-        dirpath = Path('model')
-        if dirpath.exists() and dirpath.is_dir():
-            shutil.rmtree(dirpath)
+    # Save Keras model
+    if not os.path.isdir(MODEL_DIR_PATH):
+        os.makedirs(MODEL_DIR_PATH)
+    model_path = os.path.join(MODEL_DIR_PATH, 'model.h5')
+    model.save(model_path)
 
-        # Save Keras model
-        if not os.path.isdir(MODEL_DIR_PATH):
-            os.makedirs(MODEL_DIR_PATH)
-        model_path = os.path.join(MODEL_DIR_PATH, 'model.h5')
-        model.save(model_path)
-
-        # Save in SavedModel format
-        with tf.keras.backend.get_session() as sess:
-            tf.saved_model.simple_save(
-                sess,
-                'model/saved_model',
-                inputs={'input': model.input},
-                outputs={'output': model.output})
+    # Save in SavedModel format
+    with tf.keras.backend.get_session() as sess:
+        tf.saved_model.simple_save(
+            sess,
+            'model/saved_model',
+            inputs={'input': model.input},
+            outputs={'output': model.output})
 
 
 if __name__ == '__main__':
     X = joblib.load(SAVE_DIR_PATH + '/X.joblib')
     y = joblib.load(SAVE_DIR_PATH + '/y.joblib')
-    NEURAL_NET = TrainModel.train_neural_network(X=X, y=y)
+    train_neural_network(X=X, y=y)
