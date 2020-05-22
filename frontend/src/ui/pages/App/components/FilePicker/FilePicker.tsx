@@ -17,7 +17,7 @@ const FilePicker: FunctionComponent<PrivateProps> = (props: PrivateProps) => {
       <input
         type='file'
         onChange={props.controller.onAttachFile}
-        accept='.wav'
+        accept='audio/*'
         className={classes.input}
       />
 
