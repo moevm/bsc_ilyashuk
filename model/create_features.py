@@ -16,9 +16,10 @@ def create_features(path, save_dir):
     for subdir, dirs, files in os.walk(path):
 
         for file in files:
-            print(file)
-            if(file[0] == '.'):
+            if(file[0] == '.' or int(file[4:5]) == 2):
+                print('Skip file ' + file)
                 continue
+            print(file)
             try:
 
                 X, sample_rate = librosa.load(os.path.join(subdir, file),
