@@ -4,15 +4,19 @@ import sys
 import librosa
 import numpy as np
 import pandas as pd
+from pydub import AudioSegment
 
 filename = './uploads/' + sys.argv[1]
+
+converted = AudioSegment.from_file(filename).export("temp.wav", format="wav")
+
+filename = converted.name
 
 sr = librosa.core.get_samplerate(filename)
 
 duration = librosa.core.get_duration(filename=filename, sr=sr)
 
 data, sr = librosa.load(filename, res_type='kaiser_fast', sr=sr)
-sr = np.array(sr)
 
 raw_mfccs = librosa.feature.mfcc(y=data,
                                  sr=sr,
