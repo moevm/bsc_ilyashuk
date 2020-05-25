@@ -45,7 +45,7 @@ def train_neural_network(X, y):
     # Loss plotting
     plt.plot(cnn_history.history['loss'])
     plt.plot(cnn_history.history['val_loss'])
-    plt.title('Функция ошибки')
+    plt.title('Ошибка модели')
     plt.ylabel('Ошибка')
     plt.xlabel('Эпоха')
     plt.legend(['train', 'test'], loc='upper left')
