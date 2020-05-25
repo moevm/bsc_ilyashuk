@@ -22,7 +22,7 @@ export default class PredictionService {
 
     const response = await axios.post(url, formData, config);
 
-    console.log(response.data);
+    console.log(JSON.stringify(response.data));
     return response.data;
   };
 }

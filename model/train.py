@@ -32,11 +32,11 @@ def train_neural_network(X, y):
         keras.layers.Activation('softmax', name='output')
     ])
 
-    print(model.summary)
-
     model.compile(loss='sparse_categorical_crossentropy',
                   optimizer='rmsprop',
                   metrics=['accuracy'])
+
+    print(model.summary())
 
     cnn_history = model.fit(x_traincnn, y_train,
                             batch_size=16, epochs=50,
@@ -45,9 +45,9 @@ def train_neural_network(X, y):
     # Loss plotting
     plt.plot(cnn_history.history['loss'])
     plt.plot(cnn_history.history['val_loss'])
-    plt.title('model loss')
-    plt.ylabel('loss')
-    plt.xlabel('epoch')
+    plt.title('Функция ошибки')
+    plt.ylabel('Ошибка')
+    plt.xlabel('Эпоха')
     plt.legend(['train', 'test'], loc='upper left')
     plt.savefig('plots/loss.png')
     plt.close()
@@ -55,9 +55,9 @@ def train_neural_network(X, y):
     # Accuracy plotting
     plt.plot(cnn_history.history['accuracy'])
     plt.plot(cnn_history.history['val_accuracy'])
-    plt.title('model accuracy')
-    plt.ylabel('acc')
-    plt.xlabel('epoch')
+    plt.title('Точность модели')
+    plt.ylabel('Точность')
+    plt.xlabel('Эпоха')
     plt.legend(['train', 'test'], loc='upper left')
     plt.savefig('plots/accuracy.png')
 
