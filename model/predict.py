@@ -22,16 +22,32 @@ if __name__ == '__main__':
     X = joblib.load(SAVE_DIR_PATH + '/X.joblib')
     y = joblib.load(SAVE_DIR_PATH + '/y.joblib')
 
-    positive_counter = 0
+    counter = 0
 
     for index, x in enumerate(X):
         x = np.expand_dims(x, axis=2)
         x = np.expand_dims(x, axis=0)
         predictions = loaded_model.predict_classes(x)
 
-        print(predictions)
+        if predictions[0] == y[index]:
+            counter = counter + 1
+
+        X = joblib.load(SAVE_DIR_PATH + '/X.joblib')
+    y = joblib.load(SAVE_DIR_PATH + '/y.joblib')
+
+    print(counter / len(X))
+
+    X = joblib.load(SAVE_DIR_PATH + '/savee/X.joblib')
+    y = joblib.load(SAVE_DIR_PATH + '/savee/y.joblib')
+
+    savee_counter = 0
+
+    for index, x in enumerate(X):
+        x = np.expand_dims(x, axis=2)
+        x = np.expand_dims(x, axis=0)
+        predictions = loaded_model.predict_classes(x)
 
         if predictions[0] == y[index]:
-            positive_counter = positive_counter + 1
+            savee_counter = savee_counter + 1
 
-    print(positive_counter / len(X))
+    print(savee_counter / len(X))

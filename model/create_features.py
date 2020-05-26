@@ -39,10 +39,8 @@ def create_features(path, save_dir):
     print("Data loaded. Loading time: %s seconds" %
           (time.time() - start_time))
 
-    # Creating X and y: zip makes a list of all the first elements, and a list of all the second elements.
     X, y = zip(*lst)
 
-    # Array conversion
     X, y = np.asarray(X), np.asarray(y)
 
     print(X.shape, y.shape)
