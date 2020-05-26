@@ -23,12 +23,12 @@ def train_neural_network(X, y):
     print(x_traincnn.shape, x_testcnn.shape)
 
     model = keras.Sequential([
-        keras.layers.Conv1D(64, 5, padding='same',
+        keras.layers.Conv1D(56, 5, padding='same',
                             input_shape=(40, 1), name='input'),
         keras.layers.Activation('relu'),
         keras.layers.Dropout(0.2),
         keras.layers.Flatten(),
-        keras.layers.Dense(8),
+        keras.layers.Dense(7),
         keras.layers.Activation('softmax', name='output')
     ])
 
@@ -91,4 +91,5 @@ def train_neural_network(X, y):
 if __name__ == '__main__':
     X = joblib.load(SAVE_DIR_PATH + '/X.joblib')
     y = joblib.load(SAVE_DIR_PATH + '/y.joblib')
+    print(y)
     train_neural_network(X=X, y=y)
