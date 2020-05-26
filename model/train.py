@@ -23,7 +23,7 @@ def train_neural_network(X, y):
     print(x_traincnn.shape, x_testcnn.shape)
 
     model = keras.Sequential([
-        keras.layers.Conv1D(56, 5, padding='same',
+        keras.layers.Conv1D(49, 5, padding='same',
                             input_shape=(40, 1), name='input'),
         keras.layers.Activation('relu'),
         keras.layers.Dropout(0.2),
