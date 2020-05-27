@@ -1,11 +1,11 @@
 export const labels = [
-  'neutral',
-  'happy',
-  'sad',
-  'angry',
-  'fearful',
-  'disgust',
-  'surprised',
+  'нейтральная',
+  'счастье',
+  'грусть',
+  'злость',
+  'страх',
+  'разочарование',
+  'удивление',
 ];
 
 export const labelColors = [

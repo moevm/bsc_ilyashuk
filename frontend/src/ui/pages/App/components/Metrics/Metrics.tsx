@@ -44,7 +44,17 @@ const Metrics: FunctionComponent<PrivateProps> = (props: PrivateProps) => {
             </TableCell>
             {controller.metrics.volumes.map((volume, index) => (
               <TableCell key={index} align='right' className={classes.cell}>
-                {volume}
+                {volume.toFixed(2)}
+              </TableCell>
+            ))}
+          </TableRow>
+          <TableRow className={classes.row}>
+            <TableCell component='th' scope='row' className={classes.cell}>
+              Относительный объем (%)
+            </TableCell>
+            {controller.metrics.volumes.map((volume, index) => (
+              <TableCell key={index} align='right' className={classes.cell}>
+                {((volume / controller.metrics?.totalVolume!) * 100).toFixed(2)}
               </TableCell>
             ))}
           </TableRow>
