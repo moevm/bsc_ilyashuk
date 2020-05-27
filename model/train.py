@@ -7,7 +7,6 @@ import keras
 import matplotlib.pyplot as plt
 import numpy as np
 import tensorflow as tf
-from sklearn.metrics import classification_report, confusion_matrix
 from sklearn.model_selection import train_test_split
 
 from config import MODEL_DIR_PATH, SAVE_DIR_PATH
@@ -61,13 +60,6 @@ def train_neural_network(X, y):
     plt.legend(['train', 'test'], loc='upper left')
     plt.savefig('plots/accuracy.png')
 
-    predictions = model.predict_classes(x_testcnn)
-    new_y_test = y_test.astype(int)
-    matrix = confusion_matrix(new_y_test, predictions)
-
-    print(classification_report(new_y_test, predictions))
-    print(matrix)
-
     # Remove model save folder if exists
     dirpath = Path('model')
     if dirpath.exists() and dirpath.is_dir():
@@ -91,5 +83,4 @@ def train_neural_network(X, y):
 if __name__ == '__main__':
     X = joblib.load(SAVE_DIR_PATH + '/X.joblib')
     y = joblib.load(SAVE_DIR_PATH + '/y.joblib')
-    print(y)
     train_neural_network(X=X, y=y)
