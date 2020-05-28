@@ -4,7 +4,7 @@ import { backgroundColorDark } from '../../../../../config/style';
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     container: {
-      width: '70vmax',
+      width: '60vmax',
       marginBottom: '20vmin',
     },
     cell: {

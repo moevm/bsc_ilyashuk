@@ -26,3 +26,4 @@ if __name__ == '__main__':
     y = joblib.load(SAVE_DIR_PATH + '/y.joblib')
 
     print(counter / len(X))
+    print(len(X))

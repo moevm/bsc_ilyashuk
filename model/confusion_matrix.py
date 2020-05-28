@@ -8,7 +8,7 @@ import numpy as np
 from sklearn.metrics import classification_report, confusion_matrix
 from sklearn.model_selection import train_test_split
 
-from config import MODEL_DIR_PATH, SAVE_DIR_PATH, classes
+from config import MODEL_DIR_PATH, SAVE_DIR_PATH, classes_ru
 
 
 def plot_confusion_matrix(confusion_matrix, classes,
@@ -54,7 +54,7 @@ if __name__ == '__main__':
     new_y_test = y.astype(int)
     matrix = confusion_matrix(new_y_test, predictions)
 
-    plot_confusion_matrix(matrix, classes=classes)
+    plot_confusion_matrix(matrix, classes=classes_ru)
     plt.savefig('plots/confusion_matrix.png')
     plt.show()
 
