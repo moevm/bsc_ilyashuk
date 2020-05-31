@@ -42,22 +42,24 @@ def train_neural_network(X, y):
                             validation_data=(x_testcnn, y_test))
 
     # Loss plotting
-    plt.plot(cnn_history.history['loss'])
-    plt.plot(cnn_history.history['val_loss'])
+    plt.plot(cnn_history.history['loss'], marker='.')
+    plt.plot(cnn_history.history['val_loss'], marker='.')
+    plt.grid(True)
     plt.title('Ошибка модели')
     plt.ylabel('Ошибка')
     plt.xlabel('Эпоха')
-    plt.legend(['train', 'test'], loc='upper left')
+    plt.legend(['Обучающая выборка', 'Тестовая выборка'], loc='upper right')
     plt.savefig('plots/loss.png')
     plt.close()
 
     # Accuracy plotting
-    plt.plot(cnn_history.history['accuracy'])
-    plt.plot(cnn_history.history['val_accuracy'])
+    plt.plot(cnn_history.history['accuracy'], marker='.')
+    plt.plot(cnn_history.history['val_accuracy'], marker='.')
     plt.title('Точность модели')
+    plt.grid(True)
     plt.ylabel('Точность')
     plt.xlabel('Эпоха')
-    plt.legend(['train', 'test'], loc='upper left')
+    plt.legend(['Обучающая выборка', 'Тестовая выборка'], loc='down right')
     plt.savefig('plots/accuracy.png')
 
     # Remove model save folder if exists
