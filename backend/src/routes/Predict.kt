@@ -6,7 +6,7 @@ import io.ktor.locations.*
 import io.ktor.response.*
 import io.ktor.routing.Route
 import org.moevm.bsc_ilyashuk.Predict
-import org.moevm.bsc_ilyashuk.config.fragmentLength
+import org.moevm.bsc_ilyashuk.config.chunkLength
 import org.moevm.bsc_ilyashuk.config.numOfEmotions
 import org.moevm.bsc_ilyashuk.utils.calculateVolume
 import org.moevm.bsc_ilyashuk.utils.getFeaturesFromFile
@@ -52,7 +52,7 @@ fun Route.predict(model: SavedModelBundle) {
             val predictionsWithTime =
                 predictions.mapIndexed { index, pred ->
                     mapOf(
-                        "time" to index * fragmentLength,
+                        "time" to index * chunkLength,
                         "pred" to pred
                     )
                 }

@@ -1,12 +1,13 @@
 import json
+import os
 import sys
 
 import librosa
 import numpy as np
-import pandas as pd
 from pydub import AudioSegment
 
 filename = './uploads/' + sys.argv[1]
+chunk_length = float(sys.argv[2])
 
 converted = AudioSegment.from_file(filename).export("temp.wav", format="wav")
 
@@ -22,8 +23,10 @@ raw_mfccs = librosa.feature.mfcc(y=data,
                                  sr=sr,
                                  n_mfcc=40).T
 
-mfcc_chunks = np.array_split(raw_mfccs, duration / 3)
+mfcc_chunks = np.array_split(raw_mfccs, duration / chunk_length)
 
 mean = [np.mean(chunk, axis=0).tolist() for chunk in mfcc_chunks]
+
+os.remove(converted.name)
 
 print(json.dumps({"data": mean}))
