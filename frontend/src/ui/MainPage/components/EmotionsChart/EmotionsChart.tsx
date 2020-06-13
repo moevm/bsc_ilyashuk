@@ -49,6 +49,7 @@ const EmotionsChart: FunctionComponent<PrivateProps> = (
               labels.map((element, index) => (
                 <Line
                   strokeWidth={1.5}
+                  dot={false}
                   type='monotone'
                   dataKey={element}
                   stroke={labelColors[index]}
@@ -58,6 +59,7 @@ const EmotionsChart: FunctionComponent<PrivateProps> = (
             ) : (
               <Line
                 type='monotone'
+                dot={false}
                 strokeWidth={1.5}
                 dataKey={
                   labels[props.controller.chartController.selectedFilterIndex]
