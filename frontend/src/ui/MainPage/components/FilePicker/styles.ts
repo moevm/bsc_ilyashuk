@@ -9,7 +9,7 @@ const useStyles = makeStyles((theme: Theme) =>
       flexDirection: 'column',
       alignItems: 'center',
       justifyContent: 'center',
-      marginTop: '30px',
+      marginTop: '50px',
     },
     fileInput: {
       border: 'solid',
@@ -19,7 +19,7 @@ const useStyles = makeStyles((theme: Theme) =>
       padding: '15px',
     },
     uploadButton: {
-      marginTop: '10px',
+      marginTop: '15px',
     },
     formControl: {
       minWidth: 160,

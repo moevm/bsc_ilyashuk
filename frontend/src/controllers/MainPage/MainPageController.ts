@@ -17,6 +17,7 @@ export default class MainController {
   @action.bound
   public uploadAttachment = async () => {
     if (!this.fileController.file) {
+      alert('Выберите аудио файл для загрузки');
       return;
     }
     this.predict(this.fileController.file);
