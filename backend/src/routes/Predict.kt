@@ -6,20 +6,23 @@ import io.ktor.locations.*
 import io.ktor.response.*
 import io.ktor.routing.Route
 import org.moevm.bsc_ilyashuk.Predict
-import org.moevm.bsc_ilyashuk.config.chunkLength
 import org.moevm.bsc_ilyashuk.config.numOfEmotions
 import org.moevm.bsc_ilyashuk.utils.calculateVolume
 import org.moevm.bsc_ilyashuk.utils.getFeaturesFromFile
-import org.moevm.bsc_ilyashuk.utils.getFile
+import org.moevm.bsc_ilyashuk.utils.getCallData
 import org.tensorflow.SavedModelBundle
 import org.tensorflow.Tensor
 import java.nio.FloatBuffer
 
 fun Route.predict(model: SavedModelBundle) {
     post<Predict> {
-        val file = call.getFile()
+        val callData = call.getCallData()
+
+        val file = callData.first
+        val chunkLength = callData.second
+
         try {
-            val features = getFeaturesFromFile(file.name)
+            val features = getFeaturesFromFile(file.name, chunkLength)
 
             val predictions = ArrayList<FloatArray>()
 
@@ -47,7 +50,7 @@ fun Route.predict(model: SavedModelBundle) {
                 }
             }
 
-            val volume = calculateVolume(predictions)
+            val volume = calculateVolume(predictions, chunkLength)
 
             val predictionsWithTime =
                 predictions.mapIndexed { index, pred ->

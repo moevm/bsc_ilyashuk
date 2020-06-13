@@ -1,9 +1,8 @@
 package org.moevm.bsc_ilyashuk.utils
 
-import org.moevm.bsc_ilyashuk.config.chunkLength
 import org.moevm.bsc_ilyashuk.config.numOfEmotions
 
-fun calculateVolume(predictions: ArrayList<FloatArray>): Pair<Float, Array<Float>> {
+fun calculateVolume(predictions: ArrayList<FloatArray>, chunkLength: Float): Pair<Float, Array<Float>> {
     val volumes = Array(numOfEmotions) { 0f }
 
     predictions.forEach { prediction ->

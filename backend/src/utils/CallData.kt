@@ -35,7 +35,7 @@ suspend fun InputStream.copyToSuspend(
     }
 }
 
-suspend fun ApplicationCall.getFile() : File {
+suspend fun ApplicationCall.getCallData() : Pair<File, Float> {
     val dir = File("./uploads/")
     if (!dir.exists()) {
         dir.mkdir()
@@ -43,7 +43,11 @@ suspend fun ApplicationCall.getFile() : File {
 
     val multipart = receiveMultipart()
     var file: File? = null
+    var chunkLength: Float? = null
     multipart.forEachPart { part ->
+        if(part is PartData.FormItem && part.name == "chunkLength") {
+            chunkLength = part.value.toFloat()
+        }
         if (part is PartData.FileItem) {
             val ext = File(part.originalFileName!!).extension
             file = File(
@@ -57,5 +61,5 @@ suspend fun ApplicationCall.getFile() : File {
         }
         part.dispose()
     }
-    return file!!
+    return Pair(file!!, chunkLength!!)
 }
