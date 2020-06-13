@@ -61,5 +61,5 @@ suspend fun ApplicationCall.getCallData() : Pair<File, Float> {
         }
         part.dispose()
     }
-    return Pair(file!!, chunkLength!!)
+    return Pair(file!!, chunkLength ?: 3f)
 }

@@ -1,5 +1,5 @@
 import { action, observable } from 'mobx';
-import { Metrics } from '../../../../../services/prediction';
+import { Metrics } from '../../../services/prediction';
 
 export default class MetricsController {
   @observable metrics?: Metrics;

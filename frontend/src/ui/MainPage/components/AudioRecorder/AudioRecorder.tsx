@@ -2,8 +2,8 @@ import { Button } from '@material-ui/core';
 import { inject, observer } from 'mobx-react';
 import React, { FunctionComponent } from 'react';
 import { ReactMic } from 'react-mic';
-import { backgroundColor, primaryColor } from '../../../../../config/style';
-import MainController from '../../controller';
+import { backgroundColor, primaryColor } from '../../../../config/style';
+import MainController from '../../../../controllers/MainPage/MainPage';
 import useStyles from './styles';
 
 type PublicProps = {};

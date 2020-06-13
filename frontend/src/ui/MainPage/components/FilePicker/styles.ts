@@ -1,5 +1,5 @@
 import { createStyles, makeStyles, Theme } from '@material-ui/core';
-import { primaryColor } from '../../../../../config/style';
+import { primaryColor } from '../../../../config/style';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({

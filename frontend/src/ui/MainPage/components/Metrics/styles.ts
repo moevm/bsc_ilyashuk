@@ -1,5 +1,5 @@
 import { createStyles, makeStyles, Theme } from '@material-ui/core';
-import { backgroundColorDark } from '../../../../../config/style';
+import { backgroundColorDark } from '../../../../config/style';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({

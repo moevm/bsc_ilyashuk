@@ -1,7 +1,7 @@
 import { LinearProgress } from '@material-ui/core';
 import { inject, observer } from 'mobx-react';
 import React, { FunctionComponent } from 'react';
-import MainController from '../../controller';
+import MainController from '../../../../controllers/MainPage/MainPage';
 import useStyles from './styles';
 
 type PublicProps = {};

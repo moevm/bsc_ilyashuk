@@ -11,9 +11,9 @@ import {
   XAxis,
   YAxis,
 } from 'recharts';
-import { labelColors, labels } from '../../../../../config/labels';
-import { primaryColor } from '../../../../../config/style';
-import MainController from '../../controller';
+import { labelColors, labels } from '../../../../config/labels';
+import { primaryColor } from '../../../../config/style';
+import MainController from '../../../../controllers/MainPage/MainPage';
 import EmotionsFilter from './components/EmotionsFilter/EmotionsFilter';
 import useStyles from './styles';
 

@@ -9,8 +9,8 @@ import {
 } from '@material-ui/core';
 import { inject, observer } from 'mobx-react';
 import React, { FunctionComponent } from 'react';
-import { labels } from '../../../../../config/labels';
-import MainController from '../../controller';
+import { labels } from '../../../../config/labels';
+import MainController from '../../../../controllers/MainPage/MainPage';
 import useStyles from './styles';
 
 type PublicProps = {};

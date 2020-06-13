@@ -1,9 +1,9 @@
 import { Provider } from 'mobx-react';
 import React from 'react';
 import ReactDOM from 'react-dom';
+import MainController from './controllers/MainPage/MainPage';
 import './index.css';
-import App from './ui/pages/App/App';
-import MainController from './ui/pages/App/controller';
+import MainPage from './ui/MainPage/MainPage';
 
 const storage = {
   controller: new MainController(),
@@ -11,7 +11,7 @@ const storage = {
 
 ReactDOM.render(
   <Provider {...storage}>
-    <App />
+    <MainPage />
   </Provider>,
   document.getElementById('root')
 );

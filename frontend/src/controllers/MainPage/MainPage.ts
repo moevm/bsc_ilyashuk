@@ -1,8 +1,8 @@
 import { action, observable } from 'mobx';
 import { ReactMicStopEvent } from 'react-mic';
-import PredictionService from '../../../services/prediction';
-import EmotionsChartController from './components/EmotionsChart/controller';
-import MetricsController from './components/Metrics/controller';
+import PredictionService from '../../services/prediction';
+import EmotionsChartController from './subcontrollers/EmotionsChart';
+import MetricsController from './subcontrollers/Metrics';
 
 export default class MainController {
   public readonly chart = new EmotionsChartController();

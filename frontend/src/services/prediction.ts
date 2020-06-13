@@ -10,8 +10,10 @@ export default class PredictionService {
   ): Promise<{ predictions: TimePrediction[]; metrics: Metrics }> => {
     const formData = new FormData();
     formData.append('file', file);
+    formData.append('chunkLength', '5');
 
-    const url = 'https://bsc-ilyashuk.herokuapp.com/predict';
+    // const url = 'https://bsc-ilyashuk.herokuapp.com/predict';
+    const url = 'http://0.0.0.0:8080/predict';
 
     const config = {
       headers: {

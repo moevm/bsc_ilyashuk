@@ -1,6 +1,6 @@
 import { action, observable } from 'mobx';
-import { labels } from '../../../../../config/labels';
-import { TimePrediction } from '../../../../../services/prediction';
+import { labels } from '../../../config/labels';
+import { TimePrediction } from '../../../services/prediction';
 
 export default class EmotionsChartController {
   @observable
