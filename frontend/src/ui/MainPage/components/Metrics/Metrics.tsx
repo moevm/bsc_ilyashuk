@@ -10,7 +10,7 @@ import {
 import { inject, observer } from 'mobx-react';
 import React, { FunctionComponent } from 'react';
 import { labels } from '../../../../config/labels';
-import MainController from '../../../../controllers/MainPage/MainPage';
+import MainController from '../../../../controllers/MainPage/MainPageController';
 import useStyles from './styles';
 
 type PublicProps = {};
@@ -22,7 +22,7 @@ type PrivateProps = {
 const Metrics: FunctionComponent<PrivateProps> = (props: PrivateProps) => {
   const classes = useStyles();
 
-  const controller = props.controller.metrics;
+  const controller = props.controller.metricsController;
 
   return controller.metrics != undefined ? (
     <TableContainer className={classes.container} component={Paper}>

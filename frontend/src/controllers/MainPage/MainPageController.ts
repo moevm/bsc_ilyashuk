@@ -1,29 +1,25 @@
 import { action, observable } from 'mobx';
 import { ReactMicStopEvent } from 'react-mic';
 import PredictionService from '../../services/prediction';
-import EmotionsChartController from './subcontrollers/EmotionsChart';
-import MetricsController from './subcontrollers/Metrics';
+import EmotionsChartController from './subcontrollers/EmotionsChartController';
+import FilePickerController from './subcontrollers/FilePickerController';
+import MetricsController from './subcontrollers/MetricsController';
 
 export default class MainController {
-  public readonly chart = new EmotionsChartController();
-  public readonly metrics = new MetricsController();
-
-  private file?: File;
+  public readonly chartController = new EmotionsChartController();
+  public readonly metricsController = new MetricsController();
+  public readonly fileController = new FilePickerController();
 
   @observable public uploadProgress = 0;
   @observable public isRecording = false;
   @observable public isPredicted = false;
 
-  public onAttachFile = (e: any) => {
-    this.file = e.target.files[0];
-  };
-
   @action.bound
   public uploadAttachment = async () => {
-    if (!this.file) {
+    if (!this.fileController.file) {
       return;
     }
-    this.predict(this.file);
+    this.predict(this.fileController.file);
   };
 
   @action.bound
@@ -41,11 +37,14 @@ export default class MainController {
 
   private predict = async (file: File) => {
     this.isPredicted = false;
-    const result = await PredictionService.predict(file, this.onUploadProgress);
-    this.chart.formData(result.predictions);
+    const result = await PredictionService.predict(
+      file,
+      this.fileController.selectedChunkLength,
+      this.onUploadProgress
+    );
 
-    this.metrics.formData(result.metrics);
-
+    this.chartController.formData(result.predictions);
+    this.metricsController.formData(result.metrics);
     this.isPredicted = true;
   };
 

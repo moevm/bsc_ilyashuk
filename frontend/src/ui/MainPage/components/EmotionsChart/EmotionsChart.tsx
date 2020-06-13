@@ -13,7 +13,7 @@ import {
 } from 'recharts';
 import { labelColors, labels } from '../../../../config/labels';
 import { primaryColor } from '../../../../config/style';
-import MainController from '../../../../controllers/MainPage/MainPage';
+import MainController from '../../../../controllers/MainPage/MainPageController';
 import EmotionsFilter from './components/EmotionsFilter/EmotionsFilter';
 import useStyles from './styles';
 
@@ -27,7 +27,7 @@ const EmotionsChart: FunctionComponent<PrivateProps> = (
   props: PrivateProps
 ) => {
   const classes = useStyles();
-  const chartController = props.controller.chart;
+  const chartController = props.controller.chartController;
 
   return (
     <div className={classes.container}>
@@ -45,7 +45,7 @@ const EmotionsChart: FunctionComponent<PrivateProps> = (
               bottom: 5,
             }}
           >
-            {props.controller.chart.selectedFilterIndex === -1 ? (
+            {props.controller.chartController.selectedFilterIndex === -1 ? (
               labels.map((element, index) => (
                 <Line
                   strokeWidth={1.5}
@@ -59,8 +59,14 @@ const EmotionsChart: FunctionComponent<PrivateProps> = (
               <Line
                 type='monotone'
                 strokeWidth={1.5}
-                dataKey={labels[props.controller.chart.selectedFilterIndex]}
-                stroke={labelColors[props.controller.chart.selectedFilterIndex]}
+                dataKey={
+                  labels[props.controller.chartController.selectedFilterIndex]
+                }
+                stroke={
+                  labelColors[
+                    props.controller.chartController.selectedFilterIndex
+                  ]
+                }
               />
             )}
 

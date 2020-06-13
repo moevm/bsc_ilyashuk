@@ -1,7 +1,7 @@
 import { Provider } from 'mobx-react';
 import React from 'react';
 import ReactDOM from 'react-dom';
-import MainController from './controllers/MainPage/MainPage';
+import MainController from './controllers/MainPage/MainPageController';
 import './index.css';
 import MainPage from './ui/MainPage/MainPage';
 

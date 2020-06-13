@@ -11,15 +11,27 @@ const useStyles = makeStyles((theme: Theme) =>
       justifyContent: 'center',
       marginTop: '30px',
     },
-    input: {
+    fileInput: {
       border: 'solid',
       borderWidth: 2,
       borderColor: primaryColor,
       borderRadius: 2,
-      padding: '10px',
+      padding: '15px',
     },
     uploadButton: {
       marginTop: '10px',
+    },
+    formControl: {
+      minWidth: 160,
+      marginLeft: '10px',
+    },
+    whiteText: {
+      color: 'white',
+    },
+    row: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'center',
     },
   })
 );

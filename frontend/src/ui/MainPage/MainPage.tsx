@@ -1,6 +1,6 @@
 import { inject, observer } from 'mobx-react';
 import React, { FunctionComponent } from 'react';
-import MainController from '../../controllers/MainPage/MainPage';
+import MainController from '../../controllers/MainPage/MainPageController';
 import AudioRecorder from './components/AudioRecorder/AudioRecorder';
 import EmotionsChart from './components/EmotionsChart/EmotionsChart';
 import FileUploader from './components/FilePicker/FilePicker';

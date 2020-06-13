@@ -1,7 +1,7 @@
 import { IconButton } from '@material-ui/core';
 import { inject, observer } from 'mobx-react';
 import React, { FunctionComponent } from 'react';
-import MainController from '../../../../controllers/MainPage/MainPage';
+import MainController from '../../../../controllers/MainPage/MainPageController';
 import github from '../../assets/github.png';
 import useStyles from './styles';
 

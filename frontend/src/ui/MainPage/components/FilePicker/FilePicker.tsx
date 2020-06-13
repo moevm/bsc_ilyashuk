@@ -1,7 +1,13 @@
-import { Button } from '@material-ui/core';
+import {
+  Button,
+  FormControl,
+  InputLabel,
+  MenuItem,
+  Select,
+} from '@material-ui/core';
 import { inject, observer } from 'mobx-react';
 import React, { FunctionComponent } from 'react';
-import MainController from '../../../../controllers/MainPage/MainPage';
+import MainController from '../../../../controllers/MainPage/MainPageController';
 import useStyles from './styles';
 
 type PublicProps = {};
@@ -12,14 +18,34 @@ type PrivateProps = {
 
 const FilePicker: FunctionComponent<PrivateProps> = (props: PrivateProps) => {
   const classes = useStyles();
+
+  const controller = props.controller.fileController;
   return (
     <div className={classes.container}>
-      <input
-        type='file'
-        onChange={props.controller.onAttachFile}
-        accept='audio/*'
-        className={classes.input}
-      />
+      <div className={classes.row}>
+        <input
+          type='file'
+          onChange={controller.onAttachFile}
+          accept='audio/*'
+          className={classes.fileInput}
+        />
+        <FormControl variant='filled' className={classes.formControl}>
+          <InputLabel className={classes.whiteText}>
+            Длина отрезка (сек)
+          </InputLabel>
+          <Select
+            value={controller.selectedChunkLength}
+            onChange={controller.onChunkLengthChanged}
+            className={classes.whiteText}
+          >
+            {[...Array(9)].map((value, index) => (
+              <MenuItem key={index} value={1 + index / 2}>
+                {1 + index / 2}
+              </MenuItem>
+            ))}
+          </Select>
+        </FormControl>
+      </div>
 
       <Button
         onClick={props.controller.uploadAttachment}

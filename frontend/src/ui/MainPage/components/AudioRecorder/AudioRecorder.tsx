@@ -3,7 +3,7 @@ import { inject, observer } from 'mobx-react';
 import React, { FunctionComponent } from 'react';
 import { ReactMic } from 'react-mic';
 import { backgroundColor, primaryColor } from '../../../../config/style';
-import MainController from '../../../../controllers/MainPage/MainPage';
+import MainController from '../../../../controllers/MainPage/MainPageController';
 import useStyles from './styles';
 
 type PublicProps = {};
