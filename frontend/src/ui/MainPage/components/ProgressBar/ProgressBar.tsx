@@ -14,7 +14,7 @@ const ProgressBar: FunctionComponent<PrivateProps> = (props: PrivateProps) => {
   const classes = useStyles();
   return (
     <div className={classes.container}>
-      {!props.controller.isPredicted ? (
+      {props.controller.isAnalyzing ? (
         <LinearProgress
           variant={
             props.controller.uploadProgress === 100

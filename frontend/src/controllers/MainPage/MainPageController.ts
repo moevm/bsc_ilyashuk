@@ -12,7 +12,7 @@ export default class MainController {
 
   @observable public uploadProgress = 0;
   @observable public isRecording = false;
-  @observable public isPredicted = false;
+  @observable public isAnalyzing = false;
 
   @action.bound
   public uploadAttachment = async () => {
@@ -37,7 +37,7 @@ export default class MainController {
   };
 
   private predict = async (file: File) => {
-    this.isPredicted = false;
+    this.isAnalyzing = true;
     const result = await PredictionService.predict(
       file,
       this.fileController.selectedChunkLength,
@@ -46,7 +46,7 @@ export default class MainController {
 
     this.chartController.formData(result.predictions);
     this.metricsController.formData(result.metrics);
-    this.isPredicted = true;
+    this.isAnalyzing = false;
   };
 
   @action.bound
