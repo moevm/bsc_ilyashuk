@@ -4,7 +4,7 @@ import { primaryColor } from '../../../../config/style';
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     container: {
-      width: '40vmax',
+      width: '90vmax',
       display: 'flex',
       flexDirection: 'column',
       alignItems: 'center',

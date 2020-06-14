@@ -26,7 +26,7 @@ fun Route.predict(model: SavedModelBundle) {
 
             val predictions = ArrayList<FloatArray>()
 
-            for (chunk in features.data) {
+            for (chunk in features.chunks) {
                 val session = model.session()
                 val runner = session.runner()
 
@@ -53,10 +53,11 @@ fun Route.predict(model: SavedModelBundle) {
             val volume = calculateVolume(predictions, chunkLength)
 
             val predictionsWithTime =
-                predictions.mapIndexed { index, pred ->
+                predictions.mapIndexed { index, prediction ->
                     mapOf(
-                        "time" to index * chunkLength,
-                        "pred" to pred
+                        "timeFrom" to index * chunkLength,
+                        "timeTo" to ((index + 1) * chunkLength) % features.duration,
+                        "prediction" to prediction
                     )
                 }
 

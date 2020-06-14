@@ -29,9 +29,7 @@ if __name__ == "__main__":
     filename = converted.name
 
     sr = librosa.core.get_samplerate(filename)
-
     duration = librosa.core.get_duration(filename=filename, sr=sr)
-
     data, sr = librosa.load(filename, res_type='kaiser_fast', sr=sr)
 
     raw_mfccs = librosa.feature.mfcc(y=data,
@@ -39,10 +37,10 @@ if __name__ == "__main__":
                                      n_mfcc=40).T
 
     mfcc_per_second = len(raw_mfccs) / duration
-
     mfcc_chunks = split_into_chunks(raw_mfccs, mfcc_per_second * chunk_length)
-
     mean = [np.mean(chunk, axis=0).tolist() for chunk in mfcc_chunks]
 
     os.remove(converted.name)
-    print(json.dumps({"data": mean}))
+
+    result = {"chunks": mean, "duration": duration}
+    print(json.dumps(result))

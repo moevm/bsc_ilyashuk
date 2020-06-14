@@ -1,6 +1,10 @@
 import axios from 'axios';
 
-export type TimePrediction = { time: number; pred: number[] };
+export type TimePrediction = {
+  timeFrom: number;
+  timeTo: number;
+  prediction: number[];
+};
 export type Metrics = { totalVolume: number; volumes: number[] };
 
 export default class PredictionService {
