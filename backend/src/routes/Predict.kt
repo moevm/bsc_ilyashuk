@@ -13,6 +13,7 @@ import org.moevm.bsc_ilyashuk.utils.getCallData
 import org.tensorflow.SavedModelBundle
 import org.tensorflow.Tensor
 import java.nio.FloatBuffer
+import kotlin.math.min
 
 fun Route.predict(model: SavedModelBundle) {
     post<Predict> {
@@ -56,7 +57,7 @@ fun Route.predict(model: SavedModelBundle) {
                 predictions.mapIndexed { index, prediction ->
                     mapOf(
                         "timeFrom" to index * chunkLength,
-                        "timeTo" to ((index + 1) * chunkLength) % features.duration,
+                        "timeTo" to min((index + 1) * chunkLength, features.duration),
                         "prediction" to prediction
                     )
                 }
