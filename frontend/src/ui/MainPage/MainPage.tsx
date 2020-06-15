@@ -3,6 +3,7 @@ import React, { FunctionComponent } from 'react';
 import MainController from '../../controllers/MainPage/MainPageController';
 import AudioRecorder from './components/AudioRecorder/AudioRecorder';
 import EmotionsChart from './components/EmotionsChart/EmotionsChart';
+import Examples from './components/Examples/Examples';
 import FileUploader from './components/FilePicker/FilePicker';
 import GithubButton from './components/GithubButton/GithubButton';
 import Metrics from './components/Metrics/Metrics';
@@ -21,6 +22,7 @@ const MainPage: FunctionComponent<PrivateProps> = (props: PrivateProps) => {
     <div className={classes.container}>
       <header className={classes.header}>
         <AudioRecorder />
+        <Examples />
         <FileUploader />
         <ProgressBar />
         <EmotionsChart />
