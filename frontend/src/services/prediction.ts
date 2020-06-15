@@ -17,8 +17,8 @@ export default class PredictionService {
     formData.append('file', file);
     formData.append('chunkLength', chunkLength.toString());
 
-    // const url = 'https://bsc-ilyashuk.herokuapp.com/predict';
-    const url = 'http://0.0.0.0:8080/predict';
+    const url = 'https://bsc-ilyashuk.herokuapp.com/predict';
+    // const url = 'http://0.0.0.0:8080/predict';
 
     const config = {
       headers: {
@@ -28,7 +28,7 @@ export default class PredictionService {
     };
 
     const response = await axios.post(url, formData, config);
-    console.log(JSON.stringify(response.data));
+
     return response.data;
   };
 }
