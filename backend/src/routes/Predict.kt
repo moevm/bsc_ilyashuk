@@ -51,7 +51,7 @@ fun Route.predict(model: SavedModelBundle) {
                 }
             }
 
-            val volume = calculateVolume(predictions, chunkLength)
+            val volume = calculateVolume(predictions, features.duration, chunkLength)
 
             val predictionsWithTime =
                 predictions.mapIndexed { index, prediction ->
