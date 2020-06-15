@@ -1,6 +1,8 @@
+import math
 import os
 import re
 import time
+from random import randint
 
 import joblib
 import librosa
@@ -8,6 +10,21 @@ import numpy as np
 
 from config import (SAVE_DIR_PATH, SAVEE_ORIGINAL_FOLDER_PATH,
                     TRAINING_FILES_PATH)
+
+
+def get_random_white_noise(signal):
+    SNR = randint(0, 10)
+    # RMS value of signal
+    RMS_s = math.sqrt(np.mean(signal**2))
+    # RMS values of noise
+    RMS_n = math.sqrt(RMS_s**2/(pow(10, SNR/20)))
+    # Additive white gausian noise. Thereore mean=0
+    # Because sample length is large (typically > 40000)
+    # we can use the population formula for standard daviation.
+    # because mean=0 STD=RMS
+    STD_n = RMS_n
+    noise = np.random.normal(0, STD_n, signal.shape[0])
+    return noise
 
 
 def create_features(path, save_dir):
@@ -25,10 +42,13 @@ def create_features(path, save_dir):
             print(file)
             try:
 
-                X, sample_rate = librosa.load(os.path.join(subdir, file),
-                                              res_type='kaiser_fast')
+                signal, sample_rate = librosa.load(os.path.join(subdir, file),
+                                                   res_type='kaiser_fast')
 
-                mfccs = np.mean(librosa.feature.mfcc(y=X, sr=sample_rate,
+                # noise = get_random_white_noise(signal)
+                # signal = signal + noise
+
+                mfccs = np.mean(librosa.feature.mfcc(y=signal, sr=sample_rate,
                                                      n_mfcc=40).T, axis=0)
 
                 # Перевод лейблов из 1-8 в 0-7
@@ -54,10 +74,13 @@ def create_features(path, save_dir):
             r = re.compile("([a-zA-Z]+)([0-9]+)")
             match = r.match(filename)
             if match:
-                X, sample_rate = librosa.load(os.path.join(subdir, filename),
-                                              res_type='kaiser_fast')
+                signal, sample_rate = librosa.load(os.path.join(subdir, filename),
+                                                   res_type='kaiser_fast')
 
-                mfccs = np.mean(librosa.feature.mfcc(y=X, sr=sample_rate,
+                # noise = get_random_white_noise(signal)
+                # signal = signal + noise
+
+                mfccs = np.mean(librosa.feature.mfcc(y=signal, sr=sample_rate,
                                                      n_mfcc=40).T, axis=0)
 
                 arr = mfccs, label_conversion[match.group(1)]
@@ -67,14 +90,14 @@ def create_features(path, save_dir):
     print("Data loaded. Loading time: %s seconds" %
           (time.time() - start_time))
 
-    X, y = zip(*lst)
+    signal, y = zip(*lst)
 
-    X, y = np.asarray(X), np.asarray(y)
+    signal, y = np.asarray(signal), np.asarray(y)
 
-    print(X.shape, y.shape)
+    print(signal.shape, y.shape)
     X_name, y_name = 'X.joblib', 'y.joblib'
 
-    joblib.dump(X, os.path.join(save_dir, X_name))
+    joblib.dump(signal, os.path.join(save_dir, X_name))
     joblib.dump(y, os.path.join(save_dir, y_name))
 
 
